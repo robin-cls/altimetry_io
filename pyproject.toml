@@ -1,0 +1,110 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cnes_alti_reader"
+authors = [
+    {name = "CNES", email = ""},
+]
+description = ""
+readme = "README.rst"
+keywords = [""]
+license = "LicenseRef-Proprietary-License"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: Unix",
+    "Programming Language :: Python :: 3 :: Only",
+]
+
+requires-python = ">=3.11"
+version = "0.1"
+dependencies = [
+    "numpy",
+    "xarray",
+]
+
+[project.optional-dependencies]
+tests = [
+    "pytest",
+    "pytest-xdist",
+]
+coverage = ["pytest-cov"]
+documentation = [
+]
+dev-tools = [
+    "ruff",
+    "pre-commit"
+]
+
+[tool.setuptools.package-data]
+"*" = ["*.yaml", "*.yml"]
+
+[project.urls]
+homepage = ""
+changelog = ""
+repository = ""
+
+[tool.pytest.ini_options]
+addopts = [
+    "--import-mode=importlib",
+]
+filterwarnings = [
+]
+
+[tool.coverage.run]
+branch = true
+
+[tool.coverage.paths]
+source = [
+   "src",
+   "*/site-packages",
+    ]
+
+[tool.coverage.report]
+exclude_also = [
+    "if TYPE_CHECKING:",
+]
+
+[tool.ruff]
+src = ["src/cnes_alti_reader"]
+include = ["src/cnes_alti_reader/**/*.py", "tests/**/*.py", "docs/**/*.py"]
+
+[tool.ruff.lint]
+select = [
+            'E', # pycodestyle error
+            'EM', # flake8-return
+            'F', # pyflakes
+            'G', # flake8-logging-format
+            'I',  # import sorting
+            'PTH', # flake8-use-pathlib
+            'W', # pycodestyle warning
+         ]
+
+ignore = [
+         # https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
+          'W191',
+          'E111',
+          'E114',
+          'E117',
+          'D206',
+          'D300',
+          'Q000',
+          'Q001',
+          'Q002',
+          'Q003',
+          'COM812',
+          'COM819',
+          'ISC001',
+          'ISC002',
+          ]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["ANN",
+             "S101",  # assert detected
+             "SLF001",  # Private member access
+             ]
+
+[tool.ruff.lint.isort]
+known-first-party = ["cnes_alti_reader", "tests"]
