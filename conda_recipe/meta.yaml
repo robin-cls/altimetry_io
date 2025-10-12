@@ -1,0 +1,36 @@
+# Require BUILD_NUMBER and VERSION_NUMBER to be set in environment variable
+{% set pyproject = load_file_data("pyproject.toml") %}
+
+package:
+  name: cnes_alti_reader
+  version: {{ pyproject["project"]["version"] }}
+
+source:
+  path: ..
+
+build:
+  noarch: python
+  number: {{ BUILD_NUMBER }}
+  script: {{ PYTHON }} -m pip install . --no-deps --ignore-installed -vv
+
+requirements:
+  host:
+    - python
+    - pip
+{%- for item in pyproject["build-system"]["requires"] %}
+    - {{ item }}
+{%- endfor %}
+
+  run:
+    - python>=3.10
+{%- for item in pyproject["project"]["dependencies"] %}
+    - {{ item }}
+{%- endfor %}
+
+about:
+  home: {{ pyproject["project"]["urls"]["homepage"] }}
+  license: {{ pyproject["project"]["license"] }}
+  summary: {{ pyproject["project"]["description"] }}
+  description: {{ pyproject["project"]["description"] }}
+  doc_url: {{ pyproject["project"]["urls"]["homepage"] }}
+  dev_url: {{ pyproject["project"]["urls"]["repository"] }}
