@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "cnes_alti_reader"
 authors = [
-    {name = "CNES", email = ""},
+    {name = "CNES", email = "cnes@cnes.fr"},
 ]
 description = ""
 readme = "README.rst"
@@ -21,14 +21,31 @@ classifiers = [
 requires-python = ">=3.11"
 version = "0.1"
 dependencies = [
+    "fsspec",
     "numpy",
+    "pandas",
     "xarray",
 ]
 
 [project.optional-dependencies]
+polygon = [
+    "geopandas",
+    "pyinterp",
+    "shapely",
+]
+sources = [
+    "cls_tables",
+    "ocean_tools",
+    "swot_calval",
+]
 tests = [
     "pytest",
-    "pytest-xdist",
+    "cls_tables",
+    "dask",
+    "distributed",
+    "geopandas",
+    "pyinterp",
+    "shapely",
 ]
 coverage = ["pytest-cov"]
 documentation = [
@@ -42,9 +59,9 @@ dev-tools = [
 "*" = ["*.yaml", "*.yml"]
 
 [project.urls]
-homepage = ""
-changelog = ""
-repository = ""
+homepage = "https://cnes.cnes.fr"
+changelog = "https://cnes.cnes.fr"
+repository = "https://cnes.cnes.fr"
 
 [tool.pytest.ini_options]
 addopts = [

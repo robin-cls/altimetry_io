@@ -1,0 +1,198 @@
+image: mambaorg/micromamba
+
+variables:
+  FF_TIMESTAMPS: true
+  CONDA_BUILT_PACKAGES: ${CI_PROJECT_DIR}/.build/conda_packages
+  MAMBA_ROOT_PREFIX: /opt/conda
+  MAMBA_EXE: /bin/micromamba
+
+stages:
+  - quality
+  - test
+  - build
+  - deploy
+  - release
+
+# System failure tolerance
+.system_failures:
+  retry:
+    max: 2
+    when: runner_system_failure
+
+# noinspection YAMLSchemaValidation
+.version_setup: &version_setup
+  - |
+    cat > "${HOME}/.condarc" <<'YAML'
+    channels:
+      - conda-forge
+    custom_channels:
+      cnes: http://packages.px.cls.fr/conda
+      cnesdev: http://packages.px.cls.fr/conda
+    YAML
+
+  - micromamba update -y --all
+  - micromamba install -y -n base python=3.13 git curl pre-commit conda-build coverage junitparser
+
+  - eval "$(micromamba shell hook -s bash)"
+  - micromamba activate base
+
+  - mkdir -p $CONDA_BUILT_PACKAGES
+  - git config --global --add safe.directory "$CI_PROJECT_DIR"
+
+  # Setting the version number from the pyproject.toml file (adding 'b' for beta versions)
+  - VERSION_NUMBER=$(python -c 'import tomllib as tl; data = tl.load(open("pyproject.toml", "rb"));print(data["project"]["version"])')
+  - >
+    if [[ -z "${CI_COMMIT_TAG}" ]] ; then
+      sed -i "s/^version\s*=\s*\"$VERSION_NUMBER\"/version = \"${VERSION_NUMBER}b0\"/g" pyproject.toml
+      VERSION_NUMBER="${VERSION_NUMBER}"b0
+    fi
+  - echo $VERSION_NUMBER
+
+# noinspection YAMLSchemaValidation
+.env_setup: &env_setup
+  - *version_setup
+  - >
+    if [[ -z "${CI_COMMIT_TAG}" ]] ; then
+      # The date of the commit is taken as development build number
+      BUILD_NUMBER="$(date +%Y%m%d%H%M%S -d @$(git show -s --format=format:%ct $CI_COMMIT_SHA ))"
+      CNES_CHANNEL=cnesdev
+    else
+      BUILD_NUMBER=0
+      CNES_CHANNEL=cnes
+    fi
+  - export BUILD_NUMBER
+  - export CNES_CHANNEL
+  - echo $BUILD_NUMBER
+  - echo $CNES_CHANNEL
+
+.requirements_setup: &requirements_setup
+  - *env_setup
+  - PACKAGE_NAME=$(python -c 'import tomllib as tl;print(tl.load(open("pyproject.toml", "rb"))["project"]["name"])')
+  - export PACKAGE_NAME
+  - python -c 'import tomllib as tl;[print(x) for x in
+      tl.load(open("pyproject.toml", "rb"))["project"]["dependencies"]]'
+      > requirements.txt
+  - python -c 'import tomllib as tl;[print(x) for x in
+      tl.load(open("pyproject.toml", "rb"))["project"]["optional-dependencies"]["tests"]]'
+      > requirements_tests.txt
+  - python -c 'import tomllib as tl;[print(x) for x in
+      tl.load(open("pyproject.toml", "rb"))["project"]["optional-dependencies"]["coverage"]]'
+      > requirements_coverage.txt
+
+pre_commit:
+  stage: quality
+  extends: .system_failures
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
+  before_script:
+    - *env_setup
+  script:
+    - pre-commit run --all-files
+
+.test_template:
+  stage: test
+  extends: .system_failures
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "push"
+  variables:
+    PYTHON: "3.13"
+  before_script:
+    - *requirements_setup
+    - micromamba create -n env_$PYTHON -c $CNES_CHANNEL python=$PYTHON
+      --file=requirements.txt --file=requirements_tests.txt --file=requirements_coverage.txt
+    - micromamba activate env_$PYTHON
+    - pip install . --no-deps
+    - micromamba list
+  needs:
+    - job: pre_commit
+      artifacts: false
+  script:
+    - pytest --cov=$PACKAGE_NAME --cov-report=term --cov-report=html:coverage_html-env_$PYTHON
+      --cov-report=xml:coverage.xml --junitxml=coverage_junit.xml tests/
+  coverage: '/(?i)TOTAL(?:\s+\d+){2,4}\s+(\d+)%/'
+  artifacts:
+    reports:
+      junit: coverage_junit.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
+    name: "$CI_PROJECT_NAME-$CI_JOB_NAME"
+    paths:
+      - coverage_html*/
+      - coverage.xml
+      - coverage_junit.xml
+    expire_in: 1 year
+
+test_py313:
+  extends: .test_template
+  variables:
+    PYTHON: "3.13"
+
+build_py3:
+  stage: build
+  extends: .system_failures
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "main"
+  variables:
+    PYTHON: "3.13"
+  before_script:
+    - *requirements_setup
+    - micromamba list
+  script:
+    - conda build --output-folder=$CONDA_BUILT_PACKAGES --python $PYTHON conda_recipe
+    # Creates an error if copy is not done
+    - ls $CONDA_BUILT_PACKAGES/*/*.conda
+    # Testing newly build package outside conda build to avoid including tests data in
+    # the conda package
+    - micromamba create -n env_$PYTHON -c "$(realpath "$CONDA_BUILT_PACKAGES")" -c $CNES_CHANNEL
+      python=$PYTHON $PACKAGE_NAME --file=requirements_tests.txt
+    - micromamba activate env_$PYTHON
+    - conda list
+    - pytest tests
+  artifacts:
+    name: "$CI_PROJECT_NAME-$CI_JOB_NAME"
+    # Saves all packages created and not all the conda local channel
+    paths:
+      - $CONDA_BUILT_PACKAGES/*/*.conda
+    expire_in: 1 month
+  dependencies: []
+
+deploy_py3_build:
+  stage: deploy
+  extends: .system_failures
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "main"
+  before_script:
+    - *env_setup
+  script:
+    - >
+      ONE_SENT=NO ;
+      for n in $CONDA_BUILT_PACKAGES/*/*.conda ; do
+        if [ -e "$n" ] ; then
+          curl --fail --upload-file "$n" --user "casys:$CASYSUSER_PASSWORD" --verbose "http://packages.px.cls.fr/newconda/$CNES_CHANNEL/" && ONE_SENT=YES ;
+        else /bin/true ;
+        fi ;
+      done ;
+      if [ $ONE_SENT == YES ] ; then
+        /bin/true ;
+      else
+        echo "No package found" ;
+        /bin/false ;
+      fi
+  needs:
+    - build_py3
+
+release_job:
+  stage: release
+  extends: .system_failures
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  rules:
+    - if: $CI_COMMIT_TAG
+  script:
+    - echo "running release_job"
+  release:
+    tag_name: '$CI_COMMIT_TAG'
+    description: '$CI_COMMIT_TAG'

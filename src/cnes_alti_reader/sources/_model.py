@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import abc
 import dataclasses as dc
 import logging
 from typing import TYPE_CHECKING
@@ -8,57 +9,76 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 
-from cnes_alti_reader.sources import CnesAltiSource, CnesAltiVariable
+from cnes_alti_reader.utilities import restrict_to_polygon
 
 if TYPE_CHECKING:
     import geopandas as gpd_t
     import shapely.geometry as shg_t
 
-
 LOGGER = logging.getLogger(__name__)
 
+CONST_CYCLE_NUMBER = "cycle_number"
+CONST_PASS_NUMBER = "pass_number"
+CONST_START_TIME = "start_time"
+CONST_END_TIME = "end_time"
 
-@dc.dataclass
-class CnesAltiData:
-    source: CnesAltiSource
+HALF_ORBIT_DTYPE = np.dtype(
+    [
+        (CONST_CYCLE_NUMBER, np.uint16),
+        (CONST_PASS_NUMBER, np.uint16),
+        (CONST_START_TIME, "M8[ns]"),
+        (CONST_END_TIME, "M8[ns]"),
+    ]
+)
 
+
+@dc.dataclass(kw_only=True)
+class CnesAltiVariable:
+    """A variable with its units and description."""
+
+    name: str
+    units: str = ""
+    description: str = ""
+
+
+DOC_PARAMETERS_ALTI_SOURCE = """
+    time
+        Name of the time variable.
+    longitude
+        Name of the longitude variable.
+    latitude
+        Name of the latitude variable.
+    index
+        Name of the index dimension.
+""".strip()
+
+
+@dc.dataclass(kw_only=True)
+class CnesAltiSource(abc.ABC):
+    __doc__ = f"""Altimetric data source interface.
+
+    Parameters
+    ----------
+    {DOC_PARAMETERS_ALTI_SOURCE}
+    """
+    time: str
+    longitude: str
+    latitude: str
+    index: str
+
+    _fields: dict[str, CnesAltiVariable] | None = dc.field(
+        default=None, init=False, repr=False
+    )
+
+    @abc.abstractmethod
     def variables(self) -> dict[str, CnesAltiVariable]:
-        """Variables contained in this altimetric data source."""
-        return self.source.variables()
+        """Variables contained in this source."""
 
-    def show_variables(self, containing: str | None = None) -> pd.DataFrame:
-        """Display variables containing a given string as a DataFrame.
-
-        Parameters
-        ----------
-        containing
-            String contained in variable names or descriptions.
-
-        Returns
-        -------
-        :
-            List of variables as a DataFrame.
-        """
-        if containing is not None:
-            containing = containing.upper()
-            variables = {
-                v.name: v
-                for v in self.variables().values()
-                if (containing in v.name.upper())
-                or (containing in v.description.upper())
-            }
-        else:
-            variables = self.variables()
-
-        return pd.DataFrame(
-            np.array([[v.name, v.description, v.units] for v in variables.values()]),
-            columns=["name", "description", "units"],
-        )
-
+    @abc.abstractmethod
     def period(self) -> tuple[np.datetime64, np.datetime64]:
-        """Period covered by this altimetric data source."""
-        return self.source.period()
+        """Period covered by this source."""
 
+    @abc.abstractmethod
     def half_orbit_periods(
         self,
         ho_min: tuple[int, int] | None = None,
@@ -78,8 +98,8 @@ class CnesAltiData:
         :
             Set of half orbit periods.
         """
-        return self.source.half_orbit_periods(ho_min=ho_min, ho_max=ho_max)
 
+    @abc.abstractmethod
     def query_date(
         self,
         start: np.datetime64,
@@ -105,10 +125,6 @@ class CnesAltiData:
         :
             Dataset respecting the query constraints.
         """
-        # TODO: Handle None start/end -> last hour (or start + 1h)
-        return self.source.query_date(
-            start=start, end=end, variables=variables, polygon=polygon
-        )
 
     def query_periods(
         self,
@@ -132,10 +148,14 @@ class CnesAltiData:
         :
             Dataset respecting the query constraints.
         """
-        return self.source.query_periods(
-            periods=periods, variables=variables, polygon=polygon
-        )
+        data = [
+            self.query_date(start=p[0], end=p[1], variables=variables, polygon=polygon)
+            for p in periods
+        ]
 
+        return xr.concat(data, dim=self.index)
+
+    @abc.abstractmethod
     def query_cycle(
         self,
         cycles_nb: int | list[int],
@@ -158,11 +178,8 @@ class CnesAltiData:
         :
             Dataset respecting the query constraints.
         """
-        # TODO: Handle None cycles_nb -> last cycle
-        return self.source.query_cycle(
-            cycles_nb=cycles_nb, variables=variables, polygon=polygon
-        )
 
+    @abc.abstractmethod
     def query_cycle_pass(
         self,
         cycles_nb: int | list[int],
@@ -188,10 +205,35 @@ class CnesAltiData:
         :
             Dataset respecting the query constraints.
         """
-        # TODO: Handle None cycles_nb/passes_nb -> last pass
-        return self.source.query_cycle_pass(
-            cycles_nb=cycles_nb,
-            passes_nb=passes_nb,
-            variables=variables,
+
+    def restrict_to_polygon(
+        self, data: xr.Dataset, polygon: str | gpd_t.GeoDataFrame | shg_t.Polygon | None
+    ) -> xr.Dataset:
+        """Apply a polygon selection to the provided data.
+
+        Parameters
+        ----------
+        data
+            Data from which to select data.
+        polygon
+            Selection polygon on which to reduce the data.
+
+        Returns
+        -------
+        :
+            Dataset reduced to the polygon constraints.
+        """
+        if polygon is None:
+            return data
+
+        return restrict_to_polygon(
+            data=data,
             polygon=polygon,
+            index=self.index,
+            longitude=self.longitude,
+            latitude=self.latitude,
         )
+
+    def _empty_dataset(self) -> xr.Dataset:
+        """Return an empty dataset with the correct index."""
+        return xr.Dataset({self.index: np.array([], dtype="datetime64[ns]")})

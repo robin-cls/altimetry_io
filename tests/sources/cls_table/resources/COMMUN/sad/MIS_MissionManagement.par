@@ -1,0 +1,1333 @@
+#############################################################################
+#                                                                           #
+#          FICHIER PARAMETRE du module de gestion des missions              #
+#                                                                           #
+#############################################################################
+
+# 2010/11/08: G.Garcia, OCTANT-29. Creation a partir de MIS_MissionManagement.c
+# 2012/07/04: J. Legeais. Ajout info frequence mission HY2
+
+#----------------------------------------------------------------------------
+# Mot-cle            : MISSION
+# Nbre d'occurrences : {1,N} = Nombre de missions
+# Type               : String
+#
+# Code de la mission sur 3 caractères maximum (exemple J1).
+#----------------------------------------------------------------------------
+# MISSION =
+
+#
+# NOTE: Dans les mots-cle suivants, X represente un code mission.
+#       Par exemple si l'utilisateur a défini le code mission J1 (MISSION=J1),
+#       il faut remplacer :
+#                          X_ID_MISSION  en J1_ID_MISSION,
+#                          X_NOM_MISSION en J1_NOM_MISSION,
+#                          X_REF_MISSION en J1_REF_MISSION,
+#                          X_NB_ELEM en J1_NB_ELEM
+#                          etc.
+#
+
+#----------------------------------------------------------------------------
+# Mot-cle            : X_ID_MISSION
+# Nbre d'occurrences : 1 par mission
+# Type               : Interger16
+#
+# Identifiant de la mission.
+#
+# Dans le fichier paramètre des missions 'officielles',
+# les numéros de mission doivent être compris entre 1 et 19999.
+# Dans le fichier de missions 'personnelles',
+# les numéros de mission doivent être compris entre 20000 et 32767.
+#----------------------------------------------------------------------------
+#X_ID_MISSION =
+
+#----------------------------------------------------------------------------
+# Mot-cle            : X_NOM_MISSION
+# Nbre d'occurrences : 1 par mission
+# Type               : String
+#
+# Nom de la mission (exemple Jason-1).
+#----------------------------------------------------------------------------
+# X_NOM_MISSION =
+
+#----------------------------------------------------------------------------
+# Mot-cle            : X_REF_MISSION
+# Nbre d'occurrences : 1 par mission
+# Type               : String
+#
+# Nom (code) de la mission principale.
+#----------------------------------------------------------------------------
+# X_REF_MISSION =
+
+#----------------------------------------------------------------------------
+# Mot-cle            : X_NB_ELEM
+# Nbre d'occurrences : 1 par mission
+# Type               : Integer32
+#
+# Nombre de mesures élémentaires.
+#----------------------------------------------------------------------------
+# X_NB_ELEM =
+
+#----------------------------------------------------------------------------
+# Mot-cle            : X_DELTA_T
+# Nbre d'occurrences : 1 par mission
+# Type               : Real8
+#
+# Ecart de temps moyen entre deux mesures de la mission en résolution normale
+# (en secondes).
+#----------------------------------------------------------------------------
+# X_DELTA_T =
+
+#----------------------------------------------------------------------------
+# Mot-cle            : X_DELTA_D
+# Nbre d'occurrences : 1 par mission
+# Type               : Real8
+#
+# Distance entre deux mesures de la mission (en mètres).
+#----------------------------------------------------------------------------
+# X_DELTA_D =
+
+#----------------------------------------------------------------------------
+# Mot-cle            : X_INCLINAISON
+# Nbre d'occurrences : 1 par mission
+# Type               : Real8
+#
+# Inclinaison du satellite (en degrés).
+#----------------------------------------------------------------------------
+# X_INCLINAISON =
+
+#----------------------------------------------------------------------------
+# Mot-cle            : X_DUREE_CYCLE
+# Nbre d'occurrences : 1 par mission
+# Type               : Real8
+#
+# Répétitivité (durée en jours d'un cycle).
+#----------------------------------------------------------------------------
+# X_DUREE_CYCLE =
+
+#----------------------------------------------------------------------------
+# Mot-cle            : X_PERIODE
+# Nbre d'occurrences : 1 par mission
+# Type               : Real8
+#
+# Période de la mission (durée en secondes d'une orbite).
+#----------------------------------------------------------------------------
+# X_PERIODE =
+
+#----------------------------------------------------------------------------
+# Mot-cle            : X_FREQUENCE
+# Nbre d'occurrences : 1 par mission
+# Type               : Real8
+#
+# Fréquence de l'altimètre en bande principale (en Giga Hertz).
+#----------------------------------------------------------------------------
+# X_FREQUENCE =
+
+#----------------------------------------------------------------------------
+# Mot-cle            : X_HAUTEUR
+# Nbre d'occurrences : 1 par mission
+# Type               : Real8
+#
+# Hauteur moyenne d'une mission (en mètres).
+#----------------------------------------------------------------------------
+# X_HAUTEUR =
+
+#----------------------------------------------------------------------------
+# Mot-cle            : X_VITESSE
+# Nbre d'occurrences : 1 par mission
+# Type               : Real8
+#
+# Vitesse en km/secondes.
+#----------------------------------------------------------------------------
+# X_VITESSE =
+
+#----------------------------------------------------------------------------
+# Mot-cle            : X_REVOLUTION
+# Nbre d'occurrences : 1 par mission
+# Type               : Real8
+#
+# Indicateur de révolution (INCONNU, PROGRADE ou RETROGRADE).
+#----------------------------------------------------------------------------
+# X_REVOLUTION =
+
+#----------------------------------------------------------------------------
+# Mot-cle            : X_REPETITION_N
+# Nbre d'occurrences : 1 par mission
+# Type               : Integer32
+#
+# Nombre entier de rotations par jour.
+#----------------------------------------------------------------------------
+# X_REPETITION_N =
+
+#----------------------------------------------------------------------------
+# Mot-cle            : X_REPETITION_P
+# Nbre d'occurrences : 1 par mission
+# Type               : Integer32
+#
+# Répétition du nombre de rotations par jour.
+#----------------------------------------------------------------------------
+# X_REPETITION_P =
+
+#----------------------------------------------------------------------------
+# Mot-cle            : X_REPETITION_Q
+# Nbre d'occurrences : 1 par mission
+# Type               : Integer32
+#
+# Fraction d'un cycle en nombre entier de jours.
+#----------------------------------------------------------------------------
+# X_REPETITION_Q =
+
+#----------------------------------------------------------------------------
+# Mot-cle            : X_EXCENTRICITE
+# Nbre d'occurrences : 1 par mission
+# Type               : Real8
+#
+# Excentricité de l'orbite.
+#----------------------------------------------------------------------------
+# X_EXCENTRICITE =
+
+#----------------------------------------------------------------------------
+# Mot-cle            : X_NB_PLANS
+# Nbre d'occurrences : 1 par mission
+# Type               : Integer32
+#
+# Nombre de plans d'orbite.
+#----------------------------------------------------------------------------
+# X_NB_PLANS =
+
+#----------------------------------------------------------------------------
+# Mot-cle            : X_NB_SATELLITES_PAR_PLAN
+# Nbre d'occurrences : 1 par mission
+# Type               : Integer32
+#
+# Nombre de satellites par plan.
+#----------------------------------------------------------------------------
+# X_NB_SATELLITES_PAR_PLAN =
+
+#----------------------------------------------------------------------------
+# Mot-cle            : X_DEPHASAGE_SAT
+# Nbre d'occurrences : 1 par mission
+# Type               : Real8
+#
+# Déphasage entre satellites d'un plan.
+#----------------------------------------------------------------------------
+# X_DEPHASAGE_SAT =
+
+#----------------------------------------------------------------------------
+# Mot-cle            : X_DEPHASAGE_SAT_PLANS
+# Nbre d'occurrences : 1 par mission
+# Type               : Real8
+#
+# Déphasage entre satellites de plans successifs.
+#----------------------------------------------------------------------------
+# X_DEPHASAGE_SAT_PLANS =
+
+#----------------------------------------------------------------------------
+# Mot-cle            : X_DECALAGE_PLAN
+# Nbre d'occurrences : 1 par mission
+# Type               : Real8
+#
+# Décalage en degrès entre plans.
+#----------------------------------------------------------------------------
+# X_DECALAGE_PLAN =
+
+#----------------------------------------------------------------------------
+# Mot-cle            : X_RAYON_TERRE
+# Nbre d'occurrences : 1 par mission
+# Type               : Real8
+#
+# Rayon terrestre en km.
+#----------------------------------------------------------------------------
+# X_RAYON_TERRE =
+
+#----------------------------------------------------------------------------
+# Mot-cle            : X_ROTATION_TERRE
+# Nbre d'occurrences : 1 par mission
+# Type               : Real8
+#
+# Rotation de la terre en degrés/seconde.
+#----------------------------------------------------------------------------
+#X_ROTATION_TERRE =
+
+#----------------------------------------------------------------------------
+# Mot-cle            : X_VITESSE_LUMIERE
+# Nbre d'occurrences : 1 par mission
+# Type               : Real8
+#
+# Vitesse de la lumière en km/seconde.
+#----------------------------------------------------------------------------
+#X_VITESSE_LUMIERE =
+
+#----------------------------------------------------------------------------
+# Mot-cle            : X_GRAVITE
+# Nbre d'occurrences : 1 par mission
+# Type               : Real8
+#
+# Gravité en mètres/seconde.
+#----------------------------------------------------------------------------
+#X_GRAVITE =
+
+#----------------------------------------------------------------------------
+# Mot-cle            : X_ELLIPSOIDE_1
+# Nbre d'occurrences : 1 par mission
+# Type               : Real8
+#
+# Inverse du coefficient d'applatissement de l'ellipsoïde.
+#----------------------------------------------------------------------------
+# X_ELLIPSOIDE_1 =
+
+#----------------------------------------------------------------------------
+# Mot-cle            : X_DATE_REF
+# Nbre d'occurrences : 1 par mission
+# Type               : JSM
+#
+# Date de référence au format JSM (Jour Secondes Microseondes)
+# ou DV si pas de date de référence pour la mission.
+#----------------------------------------------------------------------------
+# X_DATE_REF =
+
+################################################################################
+################################################################################
+# DEBUT DE LA LISTE DES MISSIONS CONNUES
+# au moment de la mise en place de la gestion dynamique des missions.
+#
+# ATTENTION : pour des raisons de rétro-compatibilité,
+#             l'ordre de ces missions doit rester inchangé.
+#             Ces missions et cet ordre sont T1, E1, E2, G1, P1, TP, J1, EN, G2,
+#             C1, S3, TPN, J2, J1N, I1, AL, ENN.
+#
+################################################################################
+################################################################################
+
+################################################################################
+
+# Topex
+MISSION = T1
+T1_ID_MISSION   = 1
+T1_NOM_MISSION  = Topex
+T1_REF_MISSION  = TP
+T1_NB_ELEM  = 10
+T1_DELTA_T  = 1.07858
+T1_DELTA_D  = DV
+T1_INCLINAISON  = 66.04
+T1_DUREE_CYCLE  = 9.91564
+T1_PERIODE  = 6745.72
+T1_FREQUENCE  = 13.60
+T1_HAUTEUR  = 1336000.0
+T1_VITESSE  = 7.0
+T1_REVOLUTION  = PROGRADE
+T1_NB_TRACES  = 254
+T1_REPETITION_N  = 12
+T1_REPETITION_P  = 10
+T1_REPETITION_Q  = 7
+T1_EXCENTRICITE  = 0.001
+T1_NB_PLANS  = 1
+T1_NB_SATELLITES_PAR_PLAN  = 1
+T1_DEPHASAGE_SAT  = 162
+T1_DEPHASAGE_SAT_PLANS  = 0
+T1_DECALAGE_PLAN  = 30
+T1_RAYON_TERRE  = 6378.1363
+T1_ROTATION_TERRE  = 360.0 / 86400.0
+T1_VITESSE_LUMIERE  = 299792.458
+T1_GRAVITE  = 9.807
+T1_ELLIPSOIDE_1  = 298.257
+# 23/09/1992 3h 38min 15s
+T1_DATE_REF  = 15606 13095 0
+
+################################################################################
+
+# ERS1
+MISSION = E1
+E1_ID_MISSION   = 2
+E1_NOM_MISSION  = ERS1
+E1_REF_MISSION  = E1
+E1_NB_ELEM  = 20
+E1_DELTA_T  = 0.98
+E1_DELTA_D  = 6600
+E1_INCLINAISON  = 98.54
+E1_DUREE_CYCLE  = 35
+E1_PERIODE  = 35.0 * 86400.0 / 501.0
+E1_FREQUENCE  = 13.8
+E1_HAUTEUR  = 790000.0
+E1_VITESSE  = 6.74
+E1_REVOLUTION  = RETROGRADE
+E1_NB_TRACES  = 1002
+E1_REPETITION_N  = 14
+E1_REPETITION_P  = 35
+E1_REPETITION_Q  = 11
+E1_EXCENTRICITE  = 0.001
+E1_NB_PLANS  = 1
+E1_NB_SATELLITES_PAR_PLAN  = 1
+E1_DEPHASAGE_SAT  = 180
+E1_DEPHASAGE_SAT_PLANS  = 0
+E1_DECALAGE_PLAN  = 30
+E1_RAYON_TERRE  = 6378.137
+E1_ROTATION_TERRE  = 360.0 / 86400.0
+E1_VITESSE_LUMIERE  = 299792.458
+E1_GRAVITE  = 9.807
+E1_ELLIPSOIDE_1  = 298.257223563
+# Date de référence inconnue
+E1_DATE_REF  = DV
+
+################################################################################
+
+# ERS1 Geodetic Phase
+MISSION = E1G
+E1G_ID_MISSION   = 28
+E1G_NOM_MISSION  = ERS1 Geodetic
+E1G_REF_MISSION  = E1G
+E1G_NB_ELEM  = 20
+E1G_DELTA_T  = 0.98
+E1G_DELTA_D  = 6600
+E1G_INCLINAISON  = 98.54
+E1G_DUREE_CYCLE  = 35
+E1G_PERIODE  = 35.0 * 86400.0 / 501.0
+E1G_FREQUENCE  = 13.8
+E1G_HAUTEUR  = 790000.0
+E1G_VITESSE  = 6.74
+E1G_REVOLUTION  = RETROGRADE
+E1G_NB_TRACES  = 1002
+E1G_REPETITION_N  = 14
+E1G_REPETITION_P  = 35
+E1G_REPETITION_Q  = 11
+E1G_EXCENTRICITE  = 0.001
+E1G_NB_PLANS  = 1
+E1G_NB_SATELLITES_PAR_PLAN  = 1
+E1G_DEPHASAGE_SAT  = 180
+E1G_DEPHASAGE_SAT_PLANS  = 0
+E1G_DECALAGE_PLAN  = 30
+E1G_RAYON_TERRE  = 6378.137
+E1G_ROTATION_TERRE  = 360.0 / 86400.0
+E1G_VITESSE_LUMIERE  = 299792.458
+E1G_GRAVITE  = 9.807
+E1G_ELLIPSOIDE_1  = 298.257223563
+# Date de référence inconnue
+E1G_DATE_REF  = DV
+
+################################################################################
+
+# ERS2
+MISSION = E2
+E2_ID_MISSION   = 3
+E2_NOM_MISSION  = ERS2
+E2_REF_MISSION  = E2
+E2_NB_ELEM  = 20
+E2_DELTA_T  = 0.98
+E2_DELTA_D  = 6600
+E2_INCLINAISON  = 98.54
+E2_DUREE_CYCLE  = 35
+E2_PERIODE  = 35.0 * 86400.0 / 501.0
+E2_FREQUENCE  = 13.8
+E2_HAUTEUR  = 790000.0
+E2_VITESSE  = 6.73
+E2_REVOLUTION  = RETROGRADE
+E2_NB_TRACES  = 1002
+E2_REPETITION_N  = 14
+E2_REPETITION_P  = 35
+E2_REPETITION_Q  = 11
+E2_EXCENTRICITE  = 0.001
+E2_NB_PLANS  = 1
+E2_NB_SATELLITES_PAR_PLAN  =1
+E2_DEPHASAGE_SAT  = 180
+E2_DEPHASAGE_SAT_PLANS  = 0
+E2_DECALAGE_PLAN  = 30
+E2_RAYON_TERRE  = 6378.137
+E2_ROTATION_TERRE  = 360.0 / 86400.0
+E2_VITESSE_LUMIERE  = 299792.458
+E2_GRAVITE  = 9.807
+E2_ELLIPSOIDE_1  = 298.257223563
+# 15/05/1995 22h 04min 28s
+E2_DATE_REF  = 16570 79468 0
+
+################################################################################
+
+# Geosat : utile  uniquement pendant la phase de migration
+MISSION = G1
+G1_ID_MISSION   = 4
+G1_NOM_MISSION  = Geosat
+G1_REF_MISSION  = G1
+G1_NB_ELEM  = 20
+# Le delta T a été calculé à  partir des GDR (cycles 36 à  98)
+G1_DELTA_T  = 0.979922
+G1_DELTA_D  = DV
+G1_INCLINAISON  = 108.0456
+G1_DUREE_CYCLE  = 17.05064
+G1_PERIODE  = 6037.55
+G1_FREQUENCE  = DV
+G1_HAUTEUR  = 800000.0
+G1_VITESSE  = 7.0
+G1_REVOLUTION  = RETROGRADE
+G1_NB_TRACES  = 488
+G1_REPETITION_N  = 14
+G1_REPETITION_P  = 17
+G1_REPETITION_Q  = 6
+G1_EXCENTRICITE  = 0.001
+G1_NB_PLANS  = 1
+G1_DECALAGE_PLAN  = 0
+G1_NB_SATELLITES_PAR_PLAN  = 1
+G1_DEPHASAGE_SAT  = 0
+G1_DEPHASAGE_SAT_PLANS  = 0
+G1_RAYON_TERRE  = 6378.137
+G1_ROTATION_TERRE  = 360.0 / 86400.0
+G1_VITESSE_LUMIERE  = 299792.458
+G1_GRAVITE  = 9.807
+G1_ELLIPSOIDE_1  = 298.257223563
+# Date de référence inconnue
+G1_DATE_REF  = DV
+
+################################################################################
+
+# Poseidon
+MISSION = P1
+P1_ID_MISSION   = 5
+P1_NOM_MISSION  = Poseidon
+P1_REF_MISSION  = TP
+P1_NB_ELEM  = 20
+P1_DELTA_T  = 1.0010400
+P1_DELTA_D  = DV
+P1_INCLINAISON  = 66.04
+P1_DUREE_CYCLE  = 9.91564
+P1_PERIODE  = 6745.72
+P1_FREQUENCE  = 13.65
+P1_HAUTEUR  = 1336000.0
+P1_VITESSE  = 7.0
+P1_REVOLUTION  = PROGRADE
+P1_NB_TRACES  = 254
+P1_REPETITION_N  = 12
+P1_REPETITION_P  = 10
+P1_REPETITION_Q  = 7
+P1_EXCENTRICITE  = 0.001
+P1_NB_PLANS  = 1
+P1_DECALAGE_PLAN  = 0
+P1_NB_SATELLITES_PAR_PLAN  = 1
+P1_DEPHASAGE_SAT  = 162
+P1_DEPHASAGE_SAT_PLANS  = 0
+P1_RAYON_TERRE  = 6378.1363
+P1_ROTATION_TERRE  = 360.0 / 86400.0
+P1_VITESSE_LUMIERE  = 299792.458
+P1_GRAVITE  = 9.807
+P1_ELLIPSOIDE_1  = 298.257
+# 23/09/1992 3h 38min 15s
+P1_DATE_REF  = 15606 13095 0
+
+################################################################################
+
+# Topex/Poseidon
+MISSION = TP
+TP_ID_MISSION   = 6
+TP_NOM_MISSION  = Topex/Poseidon
+TP_REF_MISSION  = TP
+TP_NB_ELEM  = 10
+# Le delta T de la mission TOPEX/POSEIDON n'existe pas
+TP_DELTA_T  = 1.07858
+TP_DELTA_D  = 6220
+TP_INCLINAISON  = 66.04
+TP_DUREE_CYCLE  = 9.91564
+TP_PERIODE  = 6745.72
+TP_FREQUENCE  = DV
+TP_HAUTEUR  = 1336000.0
+TP_VITESSE  = 5.77
+TP_REVOLUTION  = PROGRADE
+TP_NB_TRACES  = 254
+TP_REPETITION_N  = 12
+TP_REPETITION_P  = 10
+TP_REPETITION_Q  = 7
+TP_EXCENTRICITE  = 0.001
+TP_NB_PLANS  = 1
+TP_DECALAGE_PLAN  = 0
+TP_NB_SATELLITES_PAR_PLAN  = 1
+TP_DEPHASAGE_SAT  = 162
+TP_DEPHASAGE_SAT_PLANS  = 0
+TP_RAYON_TERRE  = 6378.1363
+TP_ROTATION_TERRE  = 360.0 / 86400.0
+TP_VITESSE_LUMIERE  = 299792.458
+TP_GRAVITE  = 9.807
+TP_ELLIPSOIDE_1  = 298.257
+# 23/09/1992 3h 38min 15s
+TP_DATE_REF  = 15606 13095 0
+
+################################################################################
+
+# Jason-1
+MISSION = J1
+J1_ID_MISSION   = 7
+J1_NOM_MISSION  = Jason1
+J1_REF_MISSION  = J1
+J1_NB_ELEM  = 20
+J1_DELTA_T  = 1.02
+J1_DELTA_D  = 5880.0
+J1_INCLINAISON  = 66.04
+J1_DUREE_CYCLE  = 9.91564
+J1_PERIODE  = 6745.72
+J1_FREQUENCE  = 13.575
+J1_HAUTEUR  = 1336000.0
+J1_VITESSE  = 5.77
+J1_REVOLUTION  = PROGRADE
+J1_NB_TRACES  = 254
+J1_REPETITION_N  = 12
+J1_REPETITION_P  = 10
+J1_REPETITION_Q  = 7
+J1_EXCENTRICITE  = 0.001
+J1_NB_PLANS  = 1
+J1_DECALAGE_PLAN  = 0
+J1_NB_SATELLITES_PAR_PLAN  = 1
+J1_DEPHASAGE_SAT  = 162
+J1_DEPHASAGE_SAT_PLANS  = 0
+J1_RAYON_TERRE  = 6378.1363
+J1_ROTATION_TERRE  = 360.0 / 86400.0
+J1_VITESSE_LUMIERE  = 299792.458
+J1_GRAVITE  = 9.807
+J1_ELLIPSOIDE_1  = 298.257
+# Date de référence inconnue
+J1_DATE_REF  = DV
+
+################################################################################
+
+# Envisat
+MISSION = EN
+EN_ID_MISSION   = 8
+EN_NOM_MISSION  = Envisat
+EN_REF_MISSION  = EN
+EN_NB_ELEM  = 20
+EN_DELTA_T  = 1.114
+EN_DELTA_D  = 7500
+EN_INCLINAISON  = 98.55
+EN_DUREE_CYCLE  = 35.0
+EN_PERIODE  = 35.0 * 86400.0 / 501.0
+EN_FREQUENCE  = 13.575
+EN_HAUTEUR  = 799800.0
+EN_VITESSE  = 6.73
+EN_REVOLUTION  = RETROGRADE
+EN_NB_TRACES  = 1002
+EN_REPETITION_N  = 14
+EN_REPETITION_P  = 35
+EN_REPETITION_Q  = 11
+EN_EXCENTRICITE  = 0.001
+EN_NB_PLANS  = 1
+EN_DECALAGE_PLAN  = 0
+EN_NB_SATELLITES_PAR_PLAN  = 1
+EN_DEPHASAGE_SAT  = 180
+EN_DEPHASAGE_SAT_PLANS  = 0
+EN_RAYON_TERRE  = 6378.137
+EN_ROTATION_TERRE  = 360.0 / 86400.0
+EN_VITESSE_LUMIERE  = 299792.458
+EN_GRAVITE  = 9.807
+EN_ELLIPSOIDE_1  = 298.257223563
+# Date de référence inconnue
+EN_DATE_REF  = DV
+
+################################################################################
+
+# GFO
+MISSION = G2
+G2_ID_MISSION   = 9
+G2_NOM_MISSION  = GFO
+G2_REF_MISSION  = G2
+G2_NB_ELEM  = 20
+# Le delta T a été calculé à  partir des GDR (cycles 37 à  92)
+G2_DELTA_T  = 0.979921
+G2_DELTA_D  = 6660
+G2_INCLINAISON  = 108.0448
+G2_DUREE_CYCLE  = 17.05064
+G2_PERIODE  = 6037.587
+G2_FREQUENCE  = 13.495
+G2_HAUTEUR  = 800000.0
+G2_VITESSE  = 7.0
+G2_REVOLUTION  = RETROGRADE
+G2_NB_TRACES  = 488
+G2_REPETITION_N  = 14
+G2_REPETITION_P  = 17
+G2_REPETITION_Q  = 6
+G2_EXCENTRICITE  = 0.001
+G2_NB_PLANS  = 1
+G2_DECALAGE_PLAN  = 0
+G2_NB_SATELLITES_PAR_PLAN  = 1
+G2_DEPHASAGE_SAT  = 0
+G2_DEPHASAGE_SAT_PLANS  = 0
+G2_RAYON_TERRE  = 6378.1363
+G2_ROTATION_TERRE  = 360.0 / 86400.0
+G2_VITESSE_LUMIERE  = 299792.458
+G2_GRAVITE  = 9.807
+G2_ELLIPSOIDE_1  = 298.257
+# Date de référence inconnue
+G2_DATE_REF  = DV
+
+################################################################################
+
+# Cryosat1
+MISSION = C1
+C1_ID_MISSION   = 10
+C1_NOM_MISSION  = Cryosat1
+C1_REF_MISSION  = C1
+C1_NB_ELEM  = 20
+C1_DELTA_T  = 1.07
+C1_DELTA_D  = DV
+C1_INCLINAISON  = 92.0
+# Approximation avant lancement
+C1_DUREE_CYCLE  = 29
+                    # Voir le rapport HERACLES NT.DOS.04.107 pour plus d'infos.
+# valeur entière pour rétro-compatibilité
+C1_PERIODE  = 2976
+                      # avec le rapport : 2500453 / 840
+C1_FREQUENCE  = 13.575
+C1_HAUTEUR  = 718506.0
+C1_VITESSE  = 7.0
+C1_REVOLUTION  = RETROGRADE
+# Le cycle de cryosat a une durée de 369 jours (5344*2 traces)
+C1_NB_TRACES  = 840
+    # ce qui est trop long pour nos traitements.
+    # On a donc défini des "pseudo-cycles" arbitraires
+    # d'une trentaine de jours (840 traces).
+    # Voir le rapport HERACLES NT.DOS.04.107 pour plus d'infos.
+C1_REPETITION_N  = 14
+C1_REPETITION_P  = 369
+C1_REPETITION_Q  = 178
+C1_EXCENTRICITE  = 0.001
+C1_NB_PLANS  = 1
+C1_DECALAGE_PLAN  = 0
+C1_NB_SATELLITES_PAR_PLAN  = 1
+C1_DEPHASAGE_SAT  = 0
+C1_DEPHASAGE_SAT_PLANS  = 0
+C1_RAYON_TERRE  = 6378.137
+C1_ROTATION_TERRE  = 360.0 / 86400.0
+C1_VITESSE_LUMIERE  = 299792.458
+C1_GRAVITE  = 9.807
+C1_ELLIPSOIDE_1  = 298.257223563
+# Date de référence inconnue
+C1_DATE_REF  = DV
+
+################################################################################
+
+# Sentinel-3A
+MISSION = S3A
+S3A_ID_MISSION   = 11
+S3A_NOM_MISSION  = Sentinel
+S3A_REF_MISSION  = S3A
+# 20 en LRM et possiblement 21 en SAR
+S3A_NB_ELEM  = 21
+S3A_DELTA_T  = 1.0
+S3A_DELTA_D  = 6700
+S3A_INCLINAISON  = 98.65
+S3A_DUREE_CYCLE  = 27.00024
+S3A_PERIODE  = 6059.27633
+S3A_FREQUENCE  = 13.575
+S3A_HAUTEUR  = 814500.0
+S3A_VITESSE  = 6.70
+S3A_REVOLUTION  = RETROGRADE
+S3A_NB_TRACES  = 770
+S3A_REPETITION_N  = 14
+S3A_REPETITION_P  = 27
+S3A_REPETITION_Q  = 7
+S3A_EXCENTRICITE  = 0.001
+S3A_NB_PLANS  = 1
+S3A_DECALAGE_PLAN  = 0
+S3A_NB_SATELLITES_PAR_PLAN  = 1
+S3A_DEPHASAGE_SAT  = 180
+S3A_DEPHASAGE_SAT_PLANS  = 0
+S3A_RAYON_TERRE  = 6378.1363
+S3A_ROTATION_TERRE  = 360.0 / 86400.0
+S3A_VITESSE_LUMIERE  = 299792.458
+S3A_GRAVITE  = 9.807
+S3A_ELLIPSOIDE_1  = 298.257
+S3A_DATE_REF  = DV
+
+################################################################################
+
+# Topex/Poseidon nouvelle orbite
+MISSION = TPN
+TPN_ID_MISSION   = 12
+TPN_NOM_MISSION = Topex tandem
+TPN_REF_MISSION = TP
+TPN_NB_ELEM = 10
+TPN_DELTA_T = 1.07858
+TPN_DELTA_D = 6220
+TPN_INCLINAISON = 66.04
+TPN_DUREE_CYCLE = 9.91564
+TPN_PERIODE = 6745.72
+TPN_FREQUENCE = 13.60
+TPN_HAUTEUR = 1336000.0
+TPN_VITESSE = 5.77
+TPN_REVOLUTION = PROGRADE
+TPN_NB_TRACES = 254
+TPN_REPETITION_N  = 12
+TPN_REPETITION_P  = 10
+TPN_REPETITION_Q  = 7
+TPN_EXCENTRICITE  = 0.001
+TPN_NB_PLANS  = 1
+TPN_DECALAGE_PLAN  = 0
+TPN_NB_SATELLITES_PAR_PLAN  = 1
+TPN_DEPHASAGE_SAT  = 162
+TPN_DEPHASAGE_SAT_PLANS  = 0
+TPN_RAYON_TERRE = 6378.1363
+TPN_ROTATION_TERRE  = 360.0 / 86400.0
+TPN_VITESSE_LUMIERE  = 299792.458
+TPN_GRAVITE  = 9.807
+TPN_ELLIPSOIDE_1 = 298.257
+# Date de début du cycle 365
+TPN_DATE_REF = 19215 38470 549075
+
+################################################################################
+
+# Jason2
+MISSION = J2
+J2_ID_MISSION   = 13
+J2_NOM_MISSION  = Jason2
+J2_REF_MISSION  = J2
+J2_NB_ELEM  = 20
+# Durée de l'impulsion / ( Fréquence de répétition de l'impulsion (Hz) / Nombre de mesures élémentaires ) */
+J2_DELTA_T  = 105.0 / (2060.0 * 0.05)
+# Delta entre deux mesures élémentaires * vitesse de balayage au sol
+J2_DELTA_D  = (105.0 / (2060.0 * 0.05)) * 5800
+J2_INCLINAISON  = 66.039
+J2_DUREE_CYCLE  = 9.91564
+J2_PERIODE  = 6745.72
+J2_FREQUENCE  = 13.575
+J2_HAUTEUR  = 1336000.0
+J2_VITESSE  = 5.77
+J2_REVOLUTION  = PROGRADE
+J2_NB_TRACES  = 254
+J2_REPETITION_N  = 12
+J2_REPETITION_P  = 10
+J2_REPETITION_Q  = 7
+J2_EXCENTRICITE  = 0.001
+J2_NB_PLANS  = 1
+J2_DECALAGE_PLAN  = 0
+J2_NB_SATELLITES_PAR_PLAN  = 1
+J2_DEPHASAGE_SAT  = 162
+J2_DEPHASAGE_SAT_PLANS  = 0
+J2_RAYON_TERRE  = 6378.1363
+J2_ROTATION_TERRE  = 360.0 / 86400.0
+J2_VITESSE_LUMIERE  = 299792.458
+J2_GRAVITE  = 9.807
+J2_ELLIPSOIDE_1  = 298.257
+# Date de référence inconnue
+J2_DATE_REF  = DV
+
+################################################################################
+
+# Jason1 tandem
+MISSION = J1N
+J1N_ID_MISSION   = 14
+J1N_NOM_MISSION = Jason1 tandem
+J1N_REF_MISSION = J1N
+J1N_NB_ELEM = 20
+J1N_DELTA_T = 1.02
+J1N_DELTA_D = 5880
+J1N_INCLINAISON = 66.04
+J1N_DUREE_CYCLE = 9.91564
+J1N_PERIODE = 6745.72
+J1N_FREQUENCE = 13.575
+J1N_HAUTEUR = 1336000.0
+J1N_VITESSE = 5.77
+J1N_REVOLUTION = PROGRADE
+J1N_NB_TRACES = 254
+J1N_REPETITION_N  = 12
+J1N_REPETITION_P  = 10
+J1N_REPETITION_Q  = 7
+J1N_EXCENTRICITE  = 0.001
+J1N_NB_PLANS  = 1
+J1N_DECALAGE_PLAN  = 0
+J1N_NB_SATELLITES_PAR_PLAN  = 1
+J1N_DEPHASAGE_SAT  = 162
+J1N_DEPHASAGE_SAT_PLANS  = 0
+J1N_RAYON_TERRE = 6378.1363
+J1N_ROTATION_TERRE  = 360.0 / 86400.0
+J1N_VITESSE_LUMIERE  = 299792.458
+J1N_GRAVITE  = 9.807
+J1N_ELLIPSOIDE_1 = 298.257
+# Date de référence inconnue
+J1N_DATE_REF = DV
+
+################################################################################
+
+# Icesat1
+MISSION = I1
+I1_ID_MISSION   = 15
+I1_NOM_MISSION  = Icesat1
+I1_REF_MISSION  = I1
+I1_NB_ELEM  = 40
+I1_DELTA_T  = 1.0
+# Les mesures élémentaires sont espacées d'environ 170 m,
+I1_DELTA_D  = 6800
+                   # donc la distance à  1Hz devrait être autour de 6,8 km.
+I1_INCLINAISON  = 94.0
+# Selon le site (http://nsidc.org/data/icesat/orbit_grnd_trck.html),
+I1_DUREE_CYCLE  = 870000.0 / 86400.0
+                                    # la répetitivité était au début 8 jours, puis 91 jours,  mais on préfère
+                                    # plutôt une durée d'environ 10 jours, plus exactement 870000s
+                                    # (300 traces x 48 minutes20secondes -> 870000s).
+# Selon le site (http://ilrs.gsfc.nasa.gov/satellite_missions/list_of_satellites/ices_general.html)
+I1_PERIODE  = (96.0 * 60.0) + 40.0
+                                   # 101 minutes, mais si on monte les données en table, on a plutà´t
+                                   # l'impression qu'une trace dure 48 minutes et 19 secondes au début de la
+                                   # mission, donc une période de 96 minutes 40 secondes
+# lidar qui emet des pulses laser à  1064 nm en bande principale
+I1_FREQUENCE  = 281759.83
+I1_HAUTEUR  = 600000.0
+# 7,2 km/s (26000 km/h) selon le site
+I1_VITESSE  = 7.2
+                  # http://icesat.gsfc.nasa.gov/science_mission/measurement_method_1.html
+I1_REVOLUTION  = RETROGRADE
+# On choisit arbitrairement 300, pour avoir des cycles d'environ 10 jours.
+I1_NB_TRACES  = 300
+I1_REPETITION_N  = 14
+I1_REPETITION_P  = 91
+I1_REPETITION_Q  = 80
+I1_EXCENTRICITE  = 0.001
+I1_NB_PLANS  = 1
+I1_DECALAGE_PLAN  = 0
+I1_NB_SATELLITES_PAR_PLAN  = 1
+I1_DEPHASAGE_SAT  = 0
+I1_DEPHASAGE_SAT_PLANS  = 0
+I1_RAYON_TERRE  = 6378.137
+I1_ROTATION_TERRE  = 360.0 / 86400.0
+I1_VITESSE_LUMIERE  = 299792.458
+I1_GRAVITE  = 9.807
+I1_ELLIPSOIDE_1  = 298.257223563
+# Date de référence inconnue
+I1_DATE_REF  = DV
+
+################################################################################
+
+# SARAL/AltiKa
+MISSION = AL
+AL_ID_MISSION   = 16
+AL_NOM_MISSION  = SARAL/AltiKa
+AL_REF_MISSION  = AL
+AL_NB_ELEM  = 40
+# Le delta T de cette mission n'est pas constant. Il est compris dans l'intervalle [1.056,1.128] s.
+AL_DELTA_T  = 1.056
+# 6371 = Rayon terrestre moyen
+AL_DELTA_D  = 7000
+                   # 1.056 = delta T min
+                   # (2×3.141592654×6371)÷(35×86400÷501)
+AL_INCLINAISON  = 98.55
+AL_DUREE_CYCLE  = 35.0
+AL_PERIODE  = 35.0 * 86400.0 / 501.0
+AL_FREQUENCE  = 35.75
+AL_HAUTEUR  = 799800.0
+# (2×PI×6371)÷(35×86400÷501)×1.056
+AL_VITESSE  = 6.73
+AL_REVOLUTION  = RETROGRADE
+AL_NB_TRACES  = 1002
+AL_REPETITION_N  = 14
+AL_REPETITION_P  = 35
+AL_REPETITION_Q  = 11
+AL_EXCENTRICITE  = 0.001
+AL_NB_PLANS  = 1
+AL_DECALAGE_PLAN  = 30
+AL_NB_SATELLITES_PAR_PLAN  = 1
+AL_DEPHASAGE_SAT  = 180
+AL_DEPHASAGE_SAT_PLANS  = 0
+AL_RAYON_TERRE  = 6378.1363
+AL_ROTATION_TERRE  = 360.0 / 86400.0
+AL_VITESSE_LUMIERE  = 299792.458
+AL_GRAVITE  = 9.807
+AL_ELLIPSOIDE_1  = 298.257
+AL_DATE_REF  = DV
+
+################################################################################
+
+# Envisat drift
+MISSION = ENN
+ENN_ID_MISSION   = 17
+ENN_NOM_MISSION = Envisat drift
+ENN_REF_MISSION = ENN
+ENN_NB_ELEM = 20
+ENN_DELTA_T = 1.114
+ENN_DELTA_D = 7500
+ENN_INCLINAISON = 98.476
+# ***** A CONFIRMER ******
+ENN_DUREE_CYCLE = 30.0
+ENN_PERIODE = 30.0 * 86400.0 / 431.0
+ENN_FREQUENCE = 13.575
+ENN_HAUTEUR = 782390.0
+ENN_VITESSE = 6.73
+ENN_REVOLUTION = RETROGRADE
+# A CONFIRMER
+ENN_NB_TRACES = 862
+ENN_REPETITION_N  = 14
+ENN_REPETITION_P  = 30
+ENN_REPETITION_Q  = 11
+ENN_EXCENTRICITE  = 0.001
+ENN_NB_PLANS  = 1
+ENN_DECALAGE_PLAN  = 0
+ENN_NB_SATELLITES_PAR_PLAN  = 1
+ENN_DEPHASAGE_SAT  = 180
+ENN_DEPHASAGE_SAT_PLANS  = 0
+ENN_RAYON_TERRE = 6378.137
+ENN_ROTATION_TERRE  = 360.0 / 86400.0
+ENN_VITESSE_LUMIERE  = 299792.458
+ENN_GRAVITE  = 9.807
+ENN_ELLIPSOIDE_1 = 298.257223563
+# Date de référence inconnue
+ENN_DATE_REF = DV
+
+################################################################################
+
+# Cryosat-2
+MISSION = C2
+C2_ID_MISSION   = 18
+C2_NOM_MISSION  = Cryosat-2
+C2_REF_MISSION  = C2
+C2_NB_ELEM  = 20
+C2_DELTA_T  = 0.9434
+C2_DELTA_D  = 6390
+C2_INCLINAISON  = 92.0
+C2_DUREE_CYCLE  = 29
+C2_PERIODE  = 2976
+C2_FREQUENCE  = 13.575
+C2_HAUTEUR  = 717242.0
+C2_VITESSE  = 6.77
+C2_REVOLUTION  = RETROGRADE
+C2_NB_TRACES  = 840
+C2_REPETITION_N  = 14
+C2_REPETITION_P  = 369
+C2_REPETITION_Q  = 178
+C2_EXCENTRICITE  = 0.001
+C2_NB_PLANS  = 1
+C2_DECALAGE_PLAN  = 0
+C2_NB_SATELLITES_PAR_PLAN  = 1
+C2_DEPHASAGE_SAT  = 0
+C2_DEPHASAGE_SAT_PLANS  = 0
+C2_RAYON_TERRE  = 6378.137
+C2_ROTATION_TERRE  = 360.0 / 86400.0
+C2_VITESSE_LUMIERE  = 299792.458
+C2_GRAVITE  = 9.807
+C2_ELLIPSOIDE_1  = 298.257223563
+C2_DATE_REF  = DV
+
+################################################################################
+
+# HY-2A
+MISSION = H2
+H2_ID_MISSION   = 19
+H2_NOM_MISSION  = Haiyang-2A
+H2_REF_MISSION  = H2
+H2_NB_ELEM  = 20
+# Delta T moyen entre 2 mesures consécutives (temps arrondi à la sec car msec fausses)
+H2_DELTA_T  = 1.024
+# Delta distance curviligne moyen entre 2 mesures consécutives
+H2_DELTA_D  = 6489.4
+H2_INCLINAISON  = 99.3
+H2_DUREE_CYCLE  = 14.0
+# =6267,357512953
+H2_PERIODE  = (14.0*86400.0)/386.0*2
+H2_FREQUENCE  = 13.575
+H2_HAUTEUR  = 971000.0
+H2_VITESSE  = 6.337
+H2_REVOLUTION  = RETROGRADE
+H2_NB_TRACES  = 386
+H2_REPETITION_N  = 13
+H2_REPETITION_P  = 14
+H2_REPETITION_Q  = 11
+H2_EXCENTRICITE  = 0.001
+H2_NB_PLANS  = 1
+H2_DECALAGE_PLAN  = 30
+H2_NB_SATELLITES_PAR_PLAN  = 1
+H2_DEPHASAGE_SAT  = 180
+H2_DEPHASAGE_SAT_PLANS  = 0
+H2_RAYON_TERRE  = 6378.137
+H2_ROTATION_TERRE  = 360.0 / 86400.0
+H2_VITESSE_LUMIERE  = 299792.458
+H2_GRAVITE  = 9.807
+H2_ELLIPSOIDE_1  = 298.257223563
+# 2011-10-01 01:50:02 = Cycle 1
+H2_DATE_REF  = 22553 6602 0
+
+################################################################################
+
+MISSION = J1G
+J1G_ID_MISSION   = 20
+J1G_NOM_MISSION = Jason1 Geodetic
+J1G_REF_MISSION = J1G
+J1G_NB_ELEM = 20
+J1G_DELTA_T = 1.01
+J1G_DELTA_D = 5820
+J1G_INCLINAISON = 66.042
+J1G_DUREE_CYCLE = 10.91
+J1G_PERIODE = 6730.0
+J1G_FREQUENCE = 13.575
+J1G_HAUTEUR = 1324000.0
+J1G_VITESSE = 5.78
+J1G_REVOLUTION = PROGRADE
+J1G_NB_TRACES = 280
+J1G_REPETITION_N  = 12
+J1G_REPETITION_P  = 410
+J1G_REPETITION_Q  = 299
+J1G_EXCENTRICITE  = 0.001
+J1G_NB_PLANS  = 1
+J1G_DECALAGE_PLAN  = 30
+J1G_NB_SATELLITES_PAR_PLAN  = 1
+J1G_DEPHASAGE_SAT  = 162
+J1G_DEPHASAGE_SAT_PLANS  = 0
+J1G_RAYON_TERRE = 6378.1363
+J1G_ROTATION_TERRE  = 360.0 / 86400.0
+J1G_VITESSE_LUMIERE  = 299792.458
+J1G_GRAVITE  = 9.807
+J1G_ELLIPSOIDE_1 = 298.257
+J1G_DATE_REF = DV
+
+################################################################################
+
+# Jason3
+MISSION = J3
+J3_ID_MISSION   = 21
+J3_NOM_MISSION  = Jason3
+J3_REF_MISSION  = J3
+J3_NB_ELEM  = 20
+# Durée de l'impulsion / ( Fréquence de répétition de l'impulsion (Hz) / Nombre de mesures élémentaires )
+J3_DELTA_T  = 105.0 / (2060.0 * 0.05)
+# Delta entre deux mesures élémentaires * vitesse de balayage au sol
+J3_DELTA_D  = (105.0 / (2060.0 * 0.05)) * 5800
+J3_INCLINAISON  = 66.039
+J3_DUREE_CYCLE  = 9.91564
+J3_PERIODE  = 6745.72
+J3_FREQUENCE  = 13.575
+J3_HAUTEUR  = 1336000.0
+J3_VITESSE  = 5.77
+J3_REVOLUTION  = PROGRADE
+J3_NB_TRACES  = 254
+J3_REPETITION_N  = 12
+J3_REPETITION_P  = 10
+J3_REPETITION_Q  = 7
+J3_EXCENTRICITE  = 0.001
+J3_NB_PLANS  = 1
+J3_DECALAGE_PLAN  = 0
+J3_NB_SATELLITES_PAR_PLAN  = 1
+J3_DEPHASAGE_SAT  = 162
+J3_DEPHASAGE_SAT_PLANS  = 0
+J3_RAYON_TERRE  = 6378.1363
+J3_ROTATION_TERRE  = 360.0 / 86400.0
+J3_VITESSE_LUMIERE  = 299792.458
+J3_GRAVITE  = 9.807
+J3_ELLIPSOIDE_1  = 298.257
+# Date de référence inconnue
+J3_DATE_REF  = DV
+
+################################################################################
+
+# OSTM/Jason2 interleaved
+MISSION = J2N
+J2N_ID_MISSION   = 22
+J2N_NOM_MISSION  = Jason2 interleaved
+J2N_REF_MISSION  = J2N
+J2N_NB_ELEM  = 20
+# Durée de l'impulsion / ( Fréquence de répétition de l'impulsion (Hz) / Nombre de mesures élémentaires ) */
+J2N_DELTA_T  = 105.0 / (2060.0 * 0.05)
+# Delta entre deux mesures élémentaires * vitesse de balayage au sol
+J2N_DELTA_D  = (105.0 / (2060.0 * 0.05)) * 5800
+J2N_INCLINAISON  = 66.039
+J2N_DUREE_CYCLE  = 9.91564
+J2N_PERIODE  = 6745.72
+J2N_FREQUENCE  = 13.575
+J2N_HAUTEUR  = 1336000.0
+J2N_VITESSE  = 5.77
+J2N_REVOLUTION  = PROGRADE
+J2N_NB_TRACES  = 254
+J2N_REPETITION_N  = 12
+J2N_REPETITION_P  = 10
+J2N_REPETITION_Q  = 7
+J2N_EXCENTRICITE  = 0.001
+J2N_NB_PLANS  = 1
+J2N_DECALAGE_PLAN  = 0
+J2N_NB_SATELLITES_PAR_PLAN  = 1
+J2N_DEPHASAGE_SAT  = 162
+J2N_DEPHASAGE_SAT_PLANS  = 0
+J2N_RAYON_TERRE  = 6378.1363
+J2N_ROTATION_TERRE  = 360.0 / 86400.0
+J2N_VITESSE_LUMIERE  = 299792.458
+J2N_GRAVITE  = 9.807
+J2N_ELLIPSOIDE_1  = 298.257
+# Date de référence inconnue
+J2N_DATE_REF  = DV
+
+################################################################################
+
+#H2 géodésique en mode CalVal (sous cycle redéfini à 9 jours)
+MISSION = H2G
+H2G_ID_MISSION   = 23
+H2G_NOM_MISSION  = Hy-2a Geodetic
+H2G_REF_MISSION  = H2
+# 20 en LRM et possiblement 21 en SAR
+H2G_NB_ELEM  = 20
+H2G_DELTA_T  = 1.024
+H2G_DELTA_D  = 6489
+H2G_INCLINAISON  = 99.5
+H2G_DUREE_CYCLE  = 8.99
+H2G_PERIODE  = (8.99*86400.0)/248.0*2
+H2G_FREQUENCE  = 13.575
+H2G_HAUTEUR  = 814500.0
+H2G_VITESSE  = 6.70
+H2G_REVOLUTION  = RETROGRADE
+H2G_NB_TRACES  = 248
+H2G_REPETITION_N  = 13
+H2G_REPETITION_P  = 168
+H2G_REPETITION_Q  = 131
+H2G_EXCENTRICITE  = 0.001
+H2G_NB_PLANS  = 1
+H2G_DECALAGE_PLAN  = 30
+H2G_NB_SATELLITES_PAR_PLAN  = 1
+H2G_DEPHASAGE_SAT  = 180
+H2G_DEPHASAGE_SAT_PLANS  = 0
+H2G_RAYON_TERRE  = 6378.137
+H2G_ROTATION_TERRE  = 360.0 / 86400.0
+H2G_VITESSE_LUMIERE  = 299792.458
+H2G_GRAVITE  = 9.807
+H2G_ELLIPSOIDE_1  = 298.257223563
+# 2011-10-01 01:50:02 = Cycle 1
+H2G_DATE_REF  = 22553 6602 0
+
+################################################################################
+
+# SARAL/AltiKa
+MISSION = ALG
+ALG_ID_MISSION   = 24
+ALG_NOM_MISSION  = SARAL/AltiKa
+ALG_REF_MISSION  = AL
+ALG_NB_ELEM  = 40
+# Le delta T de cette mission n'est pas constant. Il est compris dans l'intervalle [1.056,1.128] s.
+ALG_DELTA_T  = 1.056
+# 6371 = Rayon terrestre moyen
+ALG_DELTA_D  = 7000
+ALG_INCLINAISON  = 98.55
+ALG_DUREE_CYCLE  = 35.0
+ALG_PERIODE  = 35.0 * 86400.0 / 501.0
+ALG_FREQUENCE  = 35.75
+ALG_HAUTEUR  = 799800.0
+ALG_VITESSE  = 6.73
+ALG_REVOLUTION  = RETROGRADE
+ALG_NB_TRACES  = 1002
+ALG_REPETITION_N  = 14
+ALG_REPETITION_P  = 35
+ALG_REPETITION_Q  = 11
+ALG_EXCENTRICITE  = 0.001
+ALG_NB_PLANS  = 1
+ALG_DECALAGE_PLAN  = 30
+ALG_NB_SATELLITES_PAR_PLAN  = 1
+ALG_DEPHASAGE_SAT  = 180
+ALG_DEPHASAGE_SAT_PLANS  = 0
+ALG_RAYON_TERRE  = 6378.1363
+ALG_ROTATION_TERRE  = 360.0 / 86400.0
+ALG_VITESSE_LUMIERE  = 299792.458
+ALG_GRAVITE  = 9.807
+ALG_ELLIPSOIDE_1  = 298.257
+ALG_DATE_REF  = DV
+
+################################################################################
+
+# Jason2 Long Repeat Orbit phase
+MISSION = J2G
+J2G_ID_MISSION   = 25
+J2G_NOM_MISSION  = Jason2 LRO
+J2G_REF_MISSION  = J2G
+J2G_NB_ELEM  = 20
+# Durée de l'impulsion / ( Fréquence de répétition de l'impulsion (Hz) / Nombre de mesures élémentaires ) */
+J2G_DELTA_T  = 0.99787
+# Delta entre deux mesures élémentaires * vitesse de balayage au sol
+J2G_DELTA_D  = 5787.15568
+J2G_INCLINAISON  = 66.039
+J2G_DUREE_CYCLE  = 9.86
+J2G_PERIODE  = 6710.68
+J2G_FREQUENCE  = 13.575
+J2G_HAUTEUR  = 1309520.0
+J2G_VITESSE  = 5.7995
+J2G_REVOLUTION  = PROGRADE
+J2G_NB_TRACES  = 254
+J2G_REPETITION_N  = 12
+J2G_REPETITION_P  = 371
+J2G_REPETITION_Q  = 284
+J2G_EXCENTRICITE  = 0.001
+J2G_NB_PLANS  = 1
+J2G_DECALAGE_PLAN  = 0
+J2G_NB_SATELLITES_PAR_PLAN  = 1
+J2G_DEPHASAGE_SAT  = 162
+J2G_DEPHASAGE_SAT_PLANS  = 0
+J2G_RAYON_TERRE  = 6378.1363
+J2G_ROTATION_TERRE  = 360.0 / 86400.0
+J2G_VITESSE_LUMIERE  = 299792.458
+J2G_GRAVITE  = 9.807
+J2G_ELLIPSOIDE_1  = 298.257
+# Date de référence inconnue
+J2G_DATE_REF = DV
+
+################################################################################
+
+# Sentinel-3B
+MISSION = S3B
+S3B_ID_MISSION   = 26
+S3B_NOM_MISSION  = Sentinel
+S3B_REF_MISSION  = S3B
+# 20 en LRM et possiblement 21 en SAR
+S3B_NB_ELEM  = 21
+S3B_DELTA_T  = 1.0
+S3B_DELTA_D  = 6700
+S3B_INCLINAISON  = 98.65
+S3B_DUREE_CYCLE  = 27.00024
+S3B_PERIODE  = 6059.27633
+S3B_FREQUENCE  = 13.575
+S3B_HAUTEUR  = 814500.0
+S3B_VITESSE  = 6.70
+S3B_REVOLUTION  = RETROGRADE
+S3B_NB_TRACES  = 770
+S3B_REPETITION_N  = 14
+S3B_REPETITION_P  = 27
+S3B_REPETITION_Q  = 7
+S3B_EXCENTRICITE  = 0.001
+S3B_NB_PLANS  = 1
+S3B_DECALAGE_PLAN  = 0
+S3B_NB_SATELLITES_PAR_PLAN  = 1
+S3B_DEPHASAGE_SAT  = 180
+S3B_DEPHASAGE_SAT_PLANS  = 0
+S3B_RAYON_TERRE  = 6378.1363
+S3B_ROTATION_TERRE  = 360.0 / 86400.0
+S3B_VITESSE_LUMIERE  = 299792.458
+S3B_GRAVITE  = 9.807
+S3B_ELLIPSOIDE_1  = 298.257
+S3B_DATE_REF  = DV
+
+################################################################################
+
+# CFOSAT - Instrument SWIM
+MISSION = CFO
+CFO_ID_MISSION   = 27
+CFO_NOM_MISSION  = CFOSAT
+CFO_REF_MISSION  = CFO
+CFO_NB_ELEM  = 50
+# Delta T moyen entre 2 mesures consécutives (temps arrondi à la sec car msec fausses)
+CFO_DELTA_T  = 10.857
+# Delta distance curviligne moyen entre 2 mesures consécutives
+CFO_DELTA_D  = 70000
+CFO_INCLINAISON  = 97.4779
+CFO_DUREE_CYCLE  = 13.0
+# =6267,357512953
+CFO_PERIODE  = (13.0*86400.0)/394.0*2
+CFO_FREQUENCE  = 13.575
+CFO_HAUTEUR  = 520000.0
+# vitesse estimée a partir du calcul du Perimetre de l'ellipsoide / durée d'un cycle orbital de 94.9mn (ou Periode Nodale)
+CFO_VITESSE  = 7.03
+CFO_REVOLUTION  = RETROGRADE
+CFO_NB_TRACES  = 394
+CFO_REPETITION_N  = 15
+CFO_REPETITION_P  = 2
+CFO_REPETITION_Q  = 13
+CFO_EXCENTRICITE  = 0.000123000
+CFO_NB_PLANS  = 1
+CFO_DECALAGE_PLAN  = 0
+CFO_NB_SATELLITES_PAR_PLAN  = 1
+CFO_DEPHASAGE_SAT  = 180
+CFO_DEPHASAGE_SAT_PLANS  = 0
+CFO_RAYON_TERRE  = 6378.137
+CFO_ROTATION_TERRE  = 360.0 / 86400.0
+CFO_VITESSE_LUMIERE  = 299792.458
+CFO_GRAVITE  = 9.807
+CFO_ELLIPSOIDE_1  = 298.257223563
+# 2018-10-30 (Lancement)
+CFO_DATE_REF  = 25139 0 0
+
+
+################################################################################
+################################################################################
+# FIN DE LA LISTE DES MISSIONS CONNUES
+################################################################################
+################################################################################

@@ -15,6 +15,7 @@ repos:
         exclude: docs/make.bat
       - id: trailing-whitespace
         exclude: conda/meta.yaml
+
   - repo: https://github.com/pre-commit/pygrep-hooks
     rev: "v1.10.0"
     hooks:
@@ -23,9 +24,10 @@ repos:
     - id: rst-backticks
     - id: rst-directive-colons
     - id: rst-inline-touching-normal
+
   - repo: https://github.com/astral-sh/ruff-pre-commit
     # Ruff version.
-    rev: v0.13.1
+    rev: v0.14.0
     hooks:
       # Run the linter.
       - id: ruff-check
@@ -34,6 +36,7 @@ repos:
       # Run the formatter.
       - id: ruff-format
         types_or: [ python, pyi ] # not to be executed on notebooks
+
   - repo: https://github.com/myint/docformatter
     rev: "v1.7.7"
     hooks:
@@ -43,5 +46,34 @@ repos:
     rev: "v2.4.1"
     hooks:
     - id: codespell
+      exclude: |
+        (?x)(
+              ^doc/|
+              ^tests/|
+              ^tests/sources/cls_table/resources/|
+              conftest.py|
+              .*.csv
+            )
       entry: codespell -L IIF,iif,COMMUN,commun,rightt,nd
-      exclude: docs/examples/casys-report/casys_notebook_executed.ipynb
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.18.2
+    hooks:
+    - id: mypy
+#        args: [--check-untyped-defs, --ignore-missing-imports]
+      exclude: |
+        (?x)(
+              ^doc/|
+              ^tests/|
+              conftest.py|
+              .*.csv
+            )
+      additional_dependencies:
+        # Type stubs
+        - types-requests
+        - types-setuptools
+        # Typed libraries
+        - dask
+        - distributed
+        - numpy
+        - pandas

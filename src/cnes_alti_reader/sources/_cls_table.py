@@ -1,0 +1,393 @@
+"""CLS Table sources."""
+
+from __future__ import annotations
+
+import dataclasses as dc
+import logging
+from contextlib import AbstractContextManager
+from functools import lru_cache
+from typing import TYPE_CHECKING
+
+import numpy as np
+import pandas as pd
+import xarray as xr
+from cls_tables import Orf, TableMeasure, round_vanilla_datetime
+
+from ._model import (
+    DOC_PARAMETERS_ALTI_SOURCE,
+    HALF_ORBIT_DTYPE,
+    CnesAltiSource,
+    CnesAltiVariable,
+)
+
+if TYPE_CHECKING:
+    import geopandas as gpd_t
+    import shapely.geometry as shg_t
+
+LOGGER = logging.getLogger(__name__)
+
+
+@lru_cache(maxsize=10000)
+def _pass_from_indices(
+    orf: str, cycle_nb: int, pass_nb: int, method: str
+) -> tuple[
+    tuple[np.datetime64, float, float],
+    tuple[np.datetime64, float, float],
+    tuple[np.datetime64, float, float],
+    int,
+    int,
+]:
+    """Caching mechanism allowing to retrieve pass information from their cycle
+    and pass number.
+
+    Parameters
+    ----------
+    orf
+        Name of the orf.
+    cycle_nb
+        Cycle number.
+    pass_nb
+        Pass number.
+    method
+        Searching method.
+
+    Returns
+    -------
+    :
+        Pass's information as a tuple containing the following elements:
+
+        * Starting position
+        * Equator position
+        * Ending position
+        * Cycle number
+        * Pass number
+    """
+    with OrfContext(name=orf) as orf_h:
+        if pass_nb > orf_h.passes_per_cycle and method in [
+            "before",
+            "before_or_equal",
+        ]:
+            pass_nb = orf_h.passes_per_cycle
+
+        pass_info = orf_h.find_track_info_from_indices(
+            cycle_nb, pass_nb, extrapolate=False, method=method
+        )
+
+    return pass_info
+
+
+@lru_cache(maxsize=10000)
+def _pass_from_date(
+    orf: str, date: np.datetime64, method: str
+) -> tuple[
+    tuple[np.datetime64, float, float],
+    tuple[np.datetime64, float, float],
+    tuple[np.datetime64, float, float],
+    int,
+    int,
+]:
+    """Caching mechanism allowing to retrieve pass information from their date.
+
+    Parameters
+    ----------
+    orf
+        Name of the orf.
+    date
+        Date to search for.
+    method
+        Searching method.
+
+    Returns
+    -------
+    :
+        Pass's information as a tuple containing the following elements:
+
+        * Starting position
+        * Equator position
+        * Ending position
+        * Cycle number
+        * Pass number
+    """
+    with OrfContext(name=orf) as orf_h:
+        pass_info = orf_h.find_track_info_from_date(
+            date, extrapolate=False, method=method
+        )
+
+    return pass_info
+
+
+@dc.dataclass
+class OrfContext(AbstractContextManager):
+    """Context manager allowing to interact with an CLS Orf."""
+
+    name: str | None = None
+
+    _orf: Orf | None = None
+
+    def __enter__(self) -> Orf:
+        # noinspection PyArgumentList
+        self._orf = Orf(self.name, mode="r")
+
+        return self._orf
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self._orf.close()
+
+        return True
+
+
+@dc.dataclass
+class TableContext(AbstractContextManager):
+    """Context manager allowing to interact with a CLS Table."""
+
+    name: str | None = None
+
+    _table: TableMeasure | None = None
+
+    def __enter__(self) -> TableMeasure:
+        self._table = TableMeasure(self.name)
+
+        return self._table
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self._table.close()
+
+        return True
+
+
+@dc.dataclass(kw_only=True)
+class ClsTableSource(CnesAltiSource):
+    __doc__ = f"""Source implementation for CLS tables.
+
+    Parameters
+    ----------
+    name
+        Table's name.
+    orf
+        ORF's name.
+
+    {DOC_PARAMETERS_ALTI_SOURCE}
+    """
+
+    name: str
+    orf: str | None = None
+
+    time: str = "time"
+    longitude: str = "LONGITUDE"
+    latitude: str = "LATITUDE"
+    index: str = "time"
+
+    _orf_first_cycle: int = dc.field(init=False, default=0, repr=False)
+    _orf_last_cycle: int = dc.field(init=False, default=0, repr=False)
+    _orf_passes_per_cycle: int = dc.field(init=False, default=0, repr=False)
+
+    def variables(self) -> dict[str, CnesAltiVariable]:
+        if self._fields is not None:
+            return self._fields
+
+        with TableContext(name=self.name) as table:
+            self._fields = {
+                f.name: CnesAltiVariable(
+                    name=f.name, units=f.unit, description=f.description
+                )
+                for f in table.fields
+            }
+        self._fields[self.time] = CnesAltiVariable(
+            name=self.time, units="", description=self.time
+        )
+
+        return self._fields
+
+    def period(self) -> tuple[np.datetime64, np.datetime64]:
+        with TableContext(name=self.name) as table:
+            first_date = table.find_next_date(
+                round_vanilla_datetime(date=np.datetime64("1900"))
+            )
+            last_date = table.find_previous_date(
+                round_vanilla_datetime(date=np.datetime64("2200"))
+            )
+
+        return np.datetime64(first_date), np.datetime64(last_date)
+
+    def half_orbit_periods(
+        self,
+        ho_min: tuple[int, int] | None = None,
+        ho_max: tuple[int, int] | None = None,
+    ) -> pd.DataFrame:
+        self._check_orf()
+        self._set_orf_info()
+
+        ho_min_t: tuple[int, int] = ho_min or (self._orf_first_cycle, 1)
+        ho_max_t: tuple[int, int] = ho_max or (
+            self._orf_last_cycle,
+            self._orf_passes_per_cycle,
+        )
+
+        cycles_list = []
+        pass_info = self.pass_from_indices(
+            cycle_nb=ho_min_t[0], pass_nb=ho_min_t[1], method="after_or_equal"
+        )
+
+        while pass_info is not None and (
+            pass_info[0] < ho_max_t[0]
+            or (pass_info[0] == ho_max_t[0] and pass_info[1] <= ho_max_t[1])
+        ):
+            cycles_list.append((pass_info[0], pass_info[1], pass_info[2], pass_info[3]))
+            pass_info = self.pass_from_indices(
+                cycle_nb=pass_info[0],
+                pass_nb=pass_info[1],
+                method="after",
+            )
+        return pd.DataFrame(np.array(cycles_list, dtype=HALF_ORBIT_DTYPE))
+
+    def query_date(
+        self,
+        start: np.datetime64,
+        end: np.datetime64,
+        variables: list[str] | None = None,
+        polygon: str | gpd_t.GeoDataFrame | shg_t.Polygon | None = None,
+    ) -> xr.Dataset:
+        variables = variables or list(self.variables())
+
+        with TableContext(name=self.name) as table:
+            data = table.read_values_as_dataset(variables, start, end, include_end=True)
+
+        return self.restrict_to_polygon(data=data, polygon=polygon)
+
+    def query_cycle(
+        self,
+        cycles_nb: int | list[int],
+        variables: list[str] | None = None,
+        polygon: str | gpd_t.GeoDataFrame | shg_t.Polygon | None = None,
+    ) -> xr.Dataset:
+        self._check_orf()
+
+        if isinstance(cycles_nb, int):
+            cycles_nb = [cycles_nb]
+
+        data = []
+        for cycle_nb in cycles_nb:
+            pass_start_info = self.pass_from_indices(
+                cycle_nb=cycle_nb,
+                pass_nb=1,
+                method="after_or_equal",
+            )
+            pass_end_info = self.pass_from_indices(
+                cycle_nb=cycle_nb + 1,
+                pass_nb=1,
+                method="before",
+            )
+
+            if (
+                pass_start_info is None
+                or pass_end_info is None
+                or pass_start_info[0] != cycle_nb
+                or pass_end_info[0] != cycle_nb
+            ):
+                LOGGER.warning("Cycle %s not found in %s.", cycle_nb, self.orf)
+                data.append(self._empty_dataset())
+                continue
+
+            data.append(
+                self.query_date(
+                    start=pass_start_info[2],
+                    end=pass_end_info[3],
+                    variables=variables,
+                    polygon=polygon,
+                )
+            )
+
+        return self.restrict_to_polygon(
+            data=xr.concat(data, dim=self.index), polygon=polygon
+        )
+
+    def query_cycle_pass(
+        self,
+        cycles_nb: int | list[int],
+        passes_nb: int | list[int],
+        variables: list[str] | None = None,
+        polygon: str | gpd_t.GeoDataFrame | shg_t.Polygon | None = None,
+    ) -> xr.Dataset:
+        self._check_orf()
+
+        if isinstance(cycles_nb, int):
+            cycles_nb = [cycles_nb]
+
+        if isinstance(passes_nb, int):
+            passes_nb = [passes_nb]
+
+        data = []
+        for cycle_nb in cycles_nb:
+            for pass_nb in passes_nb:
+                pass_info = self.pass_from_indices(
+                    cycle_nb=cycle_nb,
+                    pass_nb=pass_nb,
+                    method="equal",
+                )
+
+                if pass_info is None:
+                    LOGGER.warning(
+                        "Cycle %s, pass %s not found in %s.",
+                        cycle_nb,
+                        pass_nb,
+                        self.orf,
+                    )
+                    data.append(self._empty_dataset())
+                    continue
+
+                data.append(
+                    self.query_date(
+                        start=pass_info[2],
+                        end=pass_info[3],
+                        variables=variables,
+                        polygon=polygon,
+                    )
+                )
+
+        return self.restrict_to_polygon(
+            data=xr.concat(data, dim=self.index), polygon=polygon
+        )
+
+    def _check_orf(self):
+        if self.orf is None:
+            msg = "An orf must be set to use this function."
+            raise ValueError(msg)
+
+    def _set_orf_info(self):
+        with OrfContext(name=self.orf) as orf:
+            self._orf_first_cycle = orf.first_cycle
+            self._orf_last_cycle = orf.last_cycle
+            self._orf_passes_per_cycle = orf.passes_per_cycle
+
+    def pass_from_indices(
+        self, cycle_nb: int, pass_nb: int, method: str
+    ) -> tuple[int, int, np.datetime64, np.datetime64] | None:
+        self._check_orf()
+
+        pass_info = _pass_from_indices(
+            orf=self.orf,
+            cycle_nb=cycle_nb,
+            pass_nb=pass_nb,
+            method=method,
+        )
+
+        if pass_info is None:
+            return None
+
+        first, _, last, cn, pn = pass_info
+
+        return cn, pn, first[0], last[0]
+
+    def pass_from_date(
+        self, date: np.datetime64, method: str
+    ) -> tuple[int, int, np.datetime64, np.datetime64] | None:
+        self._check_orf()
+
+        pass_info = _pass_from_date(orf=self.orf, date=date, method=method)
+
+        if pass_info is None:
+            return None
+
+        first, _, last, cn, pn = pass_info
+
+        return cn, pn, first[0], last[0]
