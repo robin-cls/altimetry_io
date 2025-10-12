@@ -1,4 +1,15 @@
-__all__ = ["CnesAltiData", "ClsTableSource", "CnesAltiVariable", "ScCollectionSource"]
+__all__ = [
+    "CnesAltiData",
+    "ClsTableSource",
+    "CnesAltiVariable",
+    "FileCollectionSource",
+    "ScCollectionSource",
+]
 
 from .model import CnesAltiData
-from .sources import ClsTableSource, CnesAltiVariable, ScCollectionSource
+from .sources import (
+    ClsTableSource,
+    CnesAltiVariable,
+    FileCollectionSource,
+    ScCollectionSource,
+)

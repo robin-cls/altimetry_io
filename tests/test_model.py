@@ -64,18 +64,10 @@ class FakeSource(CnesAltiSource):
     ) -> xr.Dataset:
         return xr.Dataset()
 
-    def query_cycle(
+    def query_orbit(
         self,
         cycles_nb: int | list[int],
-        variables: list[str] | None = None,
-        polygon: str | gpd_t.GeoDataFrame | shg_t.Polygon | None = None,
-    ) -> xr.Dataset:
-        return xr.Dataset()
-
-    def query_cycle_pass(
-        self,
-        cycles_nb: int | list[int],
-        passes_nb: int | list[int],
+        passes_nb: int | list[int] | None = None,
         variables: list[str] | None = None,
         polygon: str | gpd_t.GeoDataFrame | shg_t.Polygon | None = None,
     ) -> xr.Dataset:
@@ -131,15 +123,13 @@ def test_query_periods():
     )
 
 
-def test_query_cycle():
+def test_query_orbit():
     data = CnesAltiData(source=SOURCE)
-    assert data.query_cycle(cycles_nb=3).equals(SOURCE.query_cycle(cycles_nb=3))
+    assert data.query_orbit(cycles_nb=3).equals(SOURCE.query_orbit(cycles_nb=3))
 
-
-def test_query_cycle_pass():
     data = CnesAltiData(source=SOURCE)
-    assert data.query_cycle_pass(cycles_nb=3, passes_nb=1).equals(
-        SOURCE.query_cycle_pass(cycles_nb=3, passes_nb=1)
+    assert data.query_orbit(cycles_nb=3, passes_nb=1).equals(
+        SOURCE.query_orbit(cycles_nb=3, passes_nb=1)
     )
 
 

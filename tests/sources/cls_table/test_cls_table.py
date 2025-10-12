@@ -164,33 +164,31 @@ def test_query_orbits(caplog, dataset, table_name, orf_name):
     source = ClsTableSource(name=table_name)
 
     with pytest.raises(ValueError, match="An orf must be set"):
-        source.query_cycle(cycles_nb=1)
+        source.query_orbit(cycles_nb=1)
 
     source = ClsTableSource(name=table_name, orf=orf_name)
 
-    data = source.query_cycle(cycles_nb=1, variables=[INDEX])
+    data = source.query_orbit(cycles_nb=1, variables=[INDEX])
     assert np.array_equal(data[INDEX].values, dataset[INDEX].values[:3])
 
     caplog.clear()
 
-    data = source.query_cycle(cycles_nb=2, variables=[INDEX])
+    data = source.query_orbit(cycles_nb=2, variables=[INDEX])
     assert "Cycle 2 not found in" in caplog.text
     assert data.sizes[INDEX] == 0
 
     caplog.clear()
 
-    data = source.query_cycle(cycles_nb=[1, 2, 3, 4], variables=[INDEX])
+    data = source.query_orbit(cycles_nb=[1, 2, 3, 4], variables=[INDEX])
     assert "Cycle 2 not found in" in caplog.text
     assert np.array_equal(data[INDEX].values, dataset[INDEX].values)
 
-    data = source.query_cycle_pass(cycles_nb=1, passes_nb=1, variables=[INDEX])
+    data = source.query_orbit(cycles_nb=1, passes_nb=1, variables=[INDEX])
     assert np.array_equal(data[INDEX].values, dataset[INDEX].values[:2])
 
     caplog.clear()
 
-    data = source.query_cycle_pass(
-        cycles_nb=[1, 6], passes_nb=[1, 3], variables=[INDEX]
-    )
+    data = source.query_orbit(cycles_nb=[1, 6], passes_nb=[1, 3], variables=[INDEX])
     assert "Cycle 1, pass 3 not found in" in caplog.text
     assert "Cycle 6, pass 1 not found in" in caplog.text
     assert "Cycle 6, pass 3 not found in" in caplog.text

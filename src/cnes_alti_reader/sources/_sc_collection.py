@@ -121,27 +121,10 @@ class ScCollectionSource(CnesAltiSource):
         )
         return self.restrict_to_polygon(data=data, polygon=polygon_gpd)
 
-    def query_cycle(
+    def query_orbit(
         self,
         cycles_nb: int | list[int],
-        variables: list[str] | None = None,
-        polygon: str | gpd_t.GeoDataFrame | shg_t.Polygon | None = None,
-    ) -> xr.Dataset:
-        polygon_gpd, _ = self._polygons(polygon=polygon)
-
-        data = self._collection.query(
-            cycle_numbers=cycles_nb, selected_variables=variables, polygon=None
-        )
-
-        if data is None:
-            return self._empty_dataset()
-
-        return self.restrict_to_polygon(data=data.to_xarray(), polygon=polygon_gpd)
-
-    def query_cycle_pass(
-        self,
-        cycles_nb: int | list[int],
-        passes_nb: int | list[int],
+        passes_nb: int | list[int] | None = None,
         variables: list[str] | None = None,
         polygon: str | gpd_t.GeoDataFrame | shg_t.Polygon | None = None,
     ) -> xr.Dataset:

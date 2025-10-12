@@ -136,37 +136,10 @@ class CnesAltiData:
             periods=periods, variables=variables, polygon=polygon
         )
 
-    def query_cycle(
+    def query_orbit(
         self,
         cycles_nb: int | list[int],
-        variables: list[str] | None = None,
-        polygon: str | gpd_t.GeoDataFrame | shg_t.Polygon | None = None,
-    ) -> xr.Dataset:
-        """Query data for a cycle or set of cycles.
-
-        Parameters
-        ----------
-        cycles_nb
-            Cycle number or list of cycle numbers.
-        variables
-            Set of variables to query.
-        polygon
-            Selection polygon on which to reduce the data.
-
-        Returns
-        -------
-        :
-            Dataset respecting the query constraints.
-        """
-        # TODO: Handle None cycles_nb -> last cycle
-        return self.source.query_cycle(
-            cycles_nb=cycles_nb, variables=variables, polygon=polygon
-        )
-
-    def query_cycle_pass(
-        self,
-        cycles_nb: int | list[int],
-        passes_nb: int | list[int],
+        passes_nb: int | list[int] | None = None,
         variables: list[str] | None = None,
         polygon: str | gpd_t.GeoDataFrame | shg_t.Polygon | None = None,
     ) -> xr.Dataset:
@@ -189,7 +162,7 @@ class CnesAltiData:
             Dataset respecting the query constraints.
         """
         # TODO: Handle None cycles_nb/passes_nb -> last pass
-        return self.source.query_cycle_pass(
+        return self.source.query_orbit(
             cycles_nb=cycles_nb,
             passes_nb=passes_nb,
             variables=variables,

@@ -192,31 +192,10 @@ class FileCollectionSource(CnesAltiSource):
 
         return self.restrict_to_polygon(data=data, polygon=polygon)
 
-    def query_cycle(
+    def query_orbit(
         self,
         cycles_nb: int | list[int],
-        variables: list[str] | None = None,
-        polygon: str | gpd_t.GeoDataFrame | shg_t.Polygon | None = None,
-    ) -> xr.Dataset:
-        self._check_orf()
-
-        bbox = polygon_bounding_box(polygon=polygon)
-
-        data = self._database.query(
-            cycle_number=cycles_nb,
-            bbox=bbox,
-            selected_variables=variables,
-            **self._request_kwargs(),
-        )
-
-        data = data or self._empty_dataset()
-
-        return self.restrict_to_polygon(data=data, polygon=polygon)
-
-    def query_cycle_pass(
-        self,
-        cycles_nb: int | list[int],
-        passes_nb: int | list[int],
+        passes_nb: int | list[int] | None = None,
         variables: list[str] | None = None,
         polygon: str | gpd_t.GeoDataFrame | shg_t.Polygon | None = None,
     ) -> xr.Dataset:

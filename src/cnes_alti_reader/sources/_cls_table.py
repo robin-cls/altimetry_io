@@ -254,16 +254,13 @@ class ClsTableSource(CnesAltiSource):
 
         return self.restrict_to_polygon(data=data, polygon=polygon)
 
-    def query_cycle(
+    def _query_cycle(
         self,
-        cycles_nb: int | list[int],
+        cycles_nb: list[int],
         variables: list[str] | None = None,
         polygon: str | gpd_t.GeoDataFrame | shg_t.Polygon | None = None,
     ) -> xr.Dataset:
         self._check_orf()
-
-        if isinstance(cycles_nb, int):
-            cycles_nb = [cycles_nb]
 
         data = []
         for cycle_nb in cycles_nb:
@@ -301,10 +298,10 @@ class ClsTableSource(CnesAltiSource):
             data=xr.concat(data, dim=self.index), polygon=polygon
         )
 
-    def query_cycle_pass(
+    def query_orbit(
         self,
         cycles_nb: int | list[int],
-        passes_nb: int | list[int],
+        passes_nb: int | list[int] | None = None,
         variables: list[str] | None = None,
         polygon: str | gpd_t.GeoDataFrame | shg_t.Polygon | None = None,
     ) -> xr.Dataset:
@@ -312,6 +309,11 @@ class ClsTableSource(CnesAltiSource):
 
         if isinstance(cycles_nb, int):
             cycles_nb = [cycles_nb]
+
+        if passes_nb is None:
+            return self._query_cycle(
+                cycles_nb=cycles_nb, variables=variables, polygon=polygon
+            )
 
         if isinstance(passes_nb, int):
             passes_nb = [passes_nb]
