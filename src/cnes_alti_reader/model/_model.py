@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import dataclasses as dc
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 import pandas as pd
@@ -21,6 +21,10 @@ LOGGER = logging.getLogger(__name__)
 @dc.dataclass
 class CnesAltiData:
     source: CnesAltiSource
+
+    @property
+    def handler(self) -> Any:
+        return self.source.handler
 
     def variables(self) -> dict[str, CnesAltiVariable]:
         """Variables contained in this altimetric data source."""
@@ -50,10 +54,17 @@ class CnesAltiData:
         else:
             variables = self.variables()
 
-        return pd.DataFrame(
-            np.array([[v.name, v.description, v.units] for v in variables.values()]),
-            columns=["name", "description", "units"],
-        )
+        if not variables:
+            data = pd.DataFrame([], columns=["name", "description", "units"])
+        else:
+            data = pd.DataFrame(
+                np.array(
+                    [[v.name, v.description, v.units] for v in variables.values()]
+                ),
+                columns=["name", "description", "units"],
+            )
+
+        return data
 
     def period(self) -> tuple[np.datetime64, np.datetime64]:
         """Period covered by this altimetric data source."""
@@ -105,7 +116,6 @@ class CnesAltiData:
         :
             Dataset respecting the query constraints.
         """
-        # TODO: Handle None start/end -> last hour (or start + 1h)
         return self.source.query_date(
             start=start, end=end, variables=variables, polygon=polygon
         )
@@ -161,7 +171,6 @@ class CnesAltiData:
         :
             Dataset respecting the query constraints.
         """
-        # TODO: Handle None cycles_nb/passes_nb -> last pass
         return self.source.query_orbit(
             cycles_nb=cycles_nb,
             passes_nb=passes_nb,

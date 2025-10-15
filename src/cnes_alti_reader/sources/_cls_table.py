@@ -8,10 +8,10 @@ from contextlib import AbstractContextManager
 from functools import lru_cache
 from typing import TYPE_CHECKING
 
+import cls_tables as cls_t
 import numpy as np
 import pandas as pd
 import xarray as xr
-from cls_tables import Orf, TableMeasure, round_vanilla_datetime
 
 from ._model import (
     DOC_PARAMETERS_ALTI_SOURCE,
@@ -122,11 +122,11 @@ class OrfContext(AbstractContextManager):
 
     name: str | None = None
 
-    _orf: Orf | None = None
+    _orf: cls_t.Orf | None = None
 
-    def __enter__(self) -> Orf:
+    def __enter__(self) -> cls_t.Orf:
         # noinspection PyArgumentList
-        self._orf = Orf(self.name, mode="r")
+        self._orf = cls_t.Orf(self.name, mode="r")
 
         return self._orf
 
@@ -142,10 +142,10 @@ class TableContext(AbstractContextManager):
 
     name: str | None = None
 
-    _table: TableMeasure | None = None
+    _table: cls_t.TableMeasure | None = None
 
-    def __enter__(self) -> TableMeasure:
-        self._table = TableMeasure(self.name)
+    def __enter__(self) -> cls_t.TableMeasure:
+        self._table = cls_t.TableMeasure(self.name)
 
         return self._table
 
@@ -156,7 +156,7 @@ class TableContext(AbstractContextManager):
 
 
 @dc.dataclass(kw_only=True)
-class ClsTableSource(CnesAltiSource):
+class ClsTableSource(CnesAltiSource[cls_t.TableMeasure]):
     __doc__ = f"""Source implementation for CLS tables.
 
     Parameters
@@ -181,6 +181,10 @@ class ClsTableSource(CnesAltiSource):
     _orf_last_cycle: int = dc.field(init=False, default=0, repr=False)
     _orf_passes_per_cycle: int = dc.field(init=False, default=0, repr=False)
 
+    @property
+    def handler(self) -> cls_t.TableMeasure:
+        return cls_t.TableMeasure(self.name)
+
     def variables(self) -> dict[str, CnesAltiVariable]:
         if self._fields is not None:
             return self._fields
@@ -201,10 +205,10 @@ class ClsTableSource(CnesAltiSource):
     def period(self) -> tuple[np.datetime64, np.datetime64]:
         with TableContext(name=self.name) as table:
             first_date = table.find_next_date(
-                round_vanilla_datetime(date=np.datetime64("1900"))
+                cls_t.round_vanilla_datetime(date=np.datetime64("1900"))
             )
             last_date = table.find_previous_date(
-                round_vanilla_datetime(date=np.datetime64("2200"))
+                cls_t.round_vanilla_datetime(date=np.datetime64("2200"))
             )
 
         return np.datetime64(first_date), np.datetime64(last_date)

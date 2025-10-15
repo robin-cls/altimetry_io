@@ -28,6 +28,12 @@ if not have_cls_tables:  # pragma: no cover
     pytest.skip("Skipping CLSTable reader tests", allow_module_level=True)
 
 
+def test_handler(table_name):
+    source = ClsTableSource(name=table_name)
+
+    assert isinstance(source.handler, cls_tables.TableMeasure)
+
+
 def test_variables(table_name):
     source = ClsTableSource(name=table_name)
 

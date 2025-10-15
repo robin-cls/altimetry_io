@@ -1,0 +1,226 @@
+environment:
+  ges_table_dir: /work/PEACHI/commun/data/TABLES/DSC/
+
+cls_tables:
+  TABLE_C_AL_B:
+    mission: Altika
+    orf: C_AL
+    description: CalVal B
+
+  TABLE_C_AL_V:
+    mission: Altika
+    orf: C_AL
+    description: CalVal V
+
+  TABLE_C_C2_B:
+    mission: Cryosat-2
+    orf: C_C2
+    description: CalVal B
+
+  TABLE_C_CFO_BOXLR:
+    mission: CFOSAT
+    orf: C_CFO_BOXLR
+    description: CalVal
+
+  TABLE_C_CFO_BOXN:
+    mission: CFOSAT
+    orf: C_CFO_BOXN
+    description: CalVal
+
+  TABLE_C_E1_V:
+    mission: ERS-1
+    orf: C_E1
+    description: CalVal
+
+  TABLE_C_E2_V:
+    mission: ERS-2
+    orf: C_E2
+    description: CalVal
+
+  TABLE_C_EN_V:
+    mission: ENVISAT
+    orf: C_EN
+    description: CalVal
+
+  TABLE_C_G2_V:
+    mission: Geosat Follow-On
+    orf: C_G2
+    description: CalVal
+
+  TABLE_C_H2_V:
+    mission: Haiyang / HY-2
+    orf: C_H2
+    description: CalVal
+
+  TABLE_C_HCFO:
+    mission: CFOSAT
+    orf: C_HCFO
+    description: CalVal
+
+  TABLE_C_J1_V:
+    mission: Jason 1
+    orf: C_J1fusion
+    description: CalVal
+
+  TABLE_C_J2_B:
+    mission: Jason 2
+    orf: C_J2
+    description: CalVal B
+
+  TABLE_C_J2_V_GDRD:
+    mission: Jason 2
+    orf: C_J2
+    description: CalVal V
+
+  TABLE_C_J3_B:
+    mission: Jason 3
+    orf: C_J3
+    description: CalVal B
+
+  TABLE_C_S3A_B:
+    mission: Sentinel-3A
+    orf: C_S3A
+    description: CalVal B
+
+  TABLE_C_S3B_B:
+    mission: Sentinel-3B
+    orf: C_S3B
+    description: CalVal B
+
+  TABLE_C_S6A_HR_B:
+    mission: Sentinel-6A HR
+    orf: C_S6A_HR
+    description: CalVal B
+
+  TABLE_C_S6A_LR_B:
+    mission: Sentinel-6A LR
+    orf: C_S6A_LR
+    description: CalVal B
+
+  TABLE_C_TP_V:
+    mission: TOPEX/Poseidon
+    orf: C_TP
+    description: CalVal V
+
+sc_collections:
+  SWOT_L2_LR_SSH:
+    path: /work/EXPERT_CENTER/mwec/data_guest/zcollection/zcollection_lr_ocean_PGC0
+    mission: SWOT
+    description: SWOT L2 LR SSH
+
+  SWOT_L3_LR_SSH-1.0.2-CALVAL:
+    path: /work/HELPDESK_SWOTLR/commun/data/swot/L3_LR_SSH/zcollections/V1.0.2_CALVAL
+    mission: SWOT
+    description: SWOT L3 LR SSH
+
+  SWOT_L3_LR_SSH-1.0.2-SCIENCE:
+    path: /work/HELPDESK_SWOTLR/commun/data/swot/L3_LR_SSH/zcollections/V1.0.2_SCIENCE
+    mission: SWOT
+    description: SWOT L3 LR SSH
+
+  SWOT_L3_LR_SSH-2.0.1-CALVAL:
+    path: /work/HELPDESK_SWOTLR/commun/data/swot/L3_LR_SSH/zcollections/V2.0.1_CALVAL
+    mission: SWOT
+    description: SWOT L3 LR SSH
+
+  SWOT_L3_LR_SSH-2.0.1-SCIENCE:
+    path: /work/HELPDESK_SWOTLR/commun/data/swot/L3_LR_SSH/zcollections/V2.0.1_SCIENCE
+    mission: SWOT
+    description: SWOT L3 LR SSH
+
+  SWOT_L3_LR_SSH_WIND_WAVE-CALVAL:
+    path: /work/ALT/pva_axp/duacs_proto_karin/data_shared/V2.0_L3_LR_WW_CALVAL/
+    mission: SWOT
+    description: SWOT L3 LR SSH Wind Wave
+
+  SWOT_L3_LR_SSH_WIND_WAVE-SCIENCE:
+    path: /work/ALT/pva_axp/duacs_proto_karin/data_shared/V2.0_L3_LR_WW_SCIENCE/
+    mission: SWOT
+    description: SWOT L3 LR SSH Wind Wave
+
+file_collections:
+  SWOT_L2_LR_SSH-PID0:
+    path: /work/HELPDESK_SWOTLR/commun/data/aviso/swot_products/l2_karin/l2_lr_ssh/PID0/
+    mission: SWOT
+    description: SWOT L2 LR SSH PID0
+    ftype: SWOT_L2_LR_SSH
+
+  SWOT_L2_LR_SSH-PIC0:
+    path: /work/HELPDESK_SWOTLR/commun/data/aviso/swot_products/l2_karin/l2_lr_ssh/PIC0/
+    mission: SWOT
+    description: SWOT L2 LR SSH PIC0
+    ftype: SWOT_L2_LR_SSH
+
+  SWOT_L2_LR_SSH-PIC2:
+    path: /work/HELPDESK_SWOTLR/commun/data/aviso/swot_products/l2_karin/l2_lr_ssh/PIC2/
+    mission: SWOT
+    description: SWOT L2 LR SSH PIC2
+    ftype: SWOT_L2_LR_SSH
+
+  SWOT_L2_LR_SSH-PGC0:
+    path: /work/HELPDESK_SWOTLR/commun/data/aviso/swot_products/l2_karin/l2_lr_ssh/PGC0/
+    mission: SWOT
+    description: SWOT L2 LR SSH PGC0
+    ftype: SWOT_L2_LR_SSH
+
+  SWOT_L3_LR_SSH-1.0.2-BASIC:
+    path: /work/HELPDESK_SWOTLR/commun/data/aviso/swot_products/l3_karin_nadir/l3_lr_ssh/v1_0_2/Basic/
+    mission: SWOT
+    description: SWOT L3 LR SSH BASIC
+    ftype: SWOT_L3_LR_SSH
+
+  SWOT_L3_LR_SSH-1.0.2-EXPERT:
+    path: /work/HELPDESK_SWOTLR/commun/data/aviso/swot_products/l3_karin_nadir/l3_lr_ssh/v1_0_2/Expert/
+    mission: SWOT
+    description: SWOT L3 LR SSH EXPERT
+    ftype: SWOT_L3_LR_SSH
+
+  SWOT_L3_LR_SSH-2.0.1-BASIC:
+    path: /work/HELPDESK_SWOTLR/commun/data/aviso/swot_products/l3_karin_nadir/l3_lr_ssh/v2_0_1/Basic/
+    mission: SWOT
+    description: SWOT L3 LR SSH BASIC
+    ftype: SWOT_L3_LR_SSH
+
+  SWOT_L3_LR_SSH-2.0.1-EXPERT:
+    path: /work/HELPDESK_SWOTLR/commun/data/aviso/swot_products/l3_karin_nadir/l3_lr_ssh/v2_0_1/Expert/
+    mission: SWOT
+    description: SWOT L3 LR SSH EXPERT
+    ftype: SWOT_L3_LR_SSH
+
+  SWOT_L3_LR_SSH_WIND_WAVE-CALVAL:
+    path: /work/ALT/pva_axp/duacs_proto_karin/data_shared/V2.0_L3_LR_WW_CALVAL/
+    mission: SWOT
+    description: SWOT L3 LR SSH Wind Wave
+    ftype: SWOT_L3_LR_WIND_WAVE
+
+  SWOT_L3_LR_SSH_WIND_WAVE-SCIENCE:
+    path: /work/ALT/pva_axp/duacs_proto_karin/data_shared/V2.0_L3_LR_WW_SCIENCE/
+    mission: SWOT
+    description: SWOT L3 LR SSH Wind Wave
+    ftype: SWOT_L3_LR_WIND_WAVE
+
+  SWOT_L2_NALT_GDR:
+    path: /work/HELPDESK_SWOTLR/commun/data/aviso/geophysical-data-record/swot/gdr_f/
+    mission: SWOT
+    description: SWOT L2 NALT GDR
+    ftype: NADIR_L2
+
+  SWOT_L2_NALT_IGDR:
+    path: /work/HELPDESK_SWOTLR/commun/data/aviso/geophysical-data-record/swot/igdr_f/
+    mission: SWOT
+    description: SWOT L2 NALT IGDR
+    ftype: NADIR_L2
+
+  SWOT_L3_NALT_NRT-CALVAL:
+    path: /work/HELPDESK_SWOTLR/commun/data/swot/L3_NALT_OGDR/
+    mission_phase: swonc
+    mission: SWOT
+    description: SWOT L3 NALT NRT CALVAL
+    ftype: NADIR_L3
+
+  SWOT_L3_NALT_NRT-SCIENCE:
+    path: /work/HELPDESK_SWOTLR/commun/data/swot/L3_NALT_OGDR/
+    mission_phase: swon
+    mission: SWOT
+    description: SWOT L3 NALT NRT SCIENCE
+    ftype: NADIR_L3

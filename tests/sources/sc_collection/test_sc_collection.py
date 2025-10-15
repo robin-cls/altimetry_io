@@ -35,6 +35,12 @@ def swot_collection() -> pl.Path:
     return sc_test_collection
 
 
+def test_handler(swot_collection):
+    source = ScCollectionSource(path=swot_collection)
+
+    assert isinstance(source.handler, sc_io.Collection)
+
+
 def test_variables(swot_collection):
     source = ScCollectionSource(path=swot_collection)
     collection = sc_io.open_collection(folder=swot_collection)

@@ -56,7 +56,7 @@ class FCollectionType(enum.Enum):
 
 
 @dc.dataclass(kw_only=True)
-class FileCollectionSource(CnesAltiSource):
+class FileCollectionSource(CnesAltiSource[ot_io.FilesDatabase]):
     __doc__ = f"""Source implementation for sets of files.
 
     Parameters
@@ -71,14 +71,18 @@ class FileCollectionSource(CnesAltiSource):
     fs: fsspec.AbstractFileSystem | str | None = dc.field(default=None, compare=False)
     ftype: FCollectionType
 
-    subset: ot_sw_io.ProductSubset | None = None
+    time: str = "time"
+    longitude: str = "longitude"
+    latitude: str = "latitude"
+    # TODO: Do not set this?
+    index: str = "num_lines"
+
+    subset: ot_sw_io.ProductSubset | str | None = None
+    mission: ot_mis.MissionsPhases | str | None = None
     version: str | None = None
 
-    # Just Nadir
-    mission: ot_mis.MissionsPhases | None = None
-
     _database: ot_io.FilesDatabase = dc.field(repr=False, init=False, compare=False)
-    _initialized: bool = dc.field(repr=False, init=False, compare=False)
+    _initialized: bool = dc.field(repr=False, init=False, compare=False, default=False)
 
     _with_ho: bool = dc.field(repr=False, init=False, compare=False, default=False)
     _data: pd.DataFrame = dc.field(repr=False, init=False, compare=False)
@@ -86,9 +90,12 @@ class FileCollectionSource(CnesAltiSource):
     def __post_init__(self):
         self.fs = normalize_file_system(fs=self.fs)
         self.ftype = normalize_enum(self.ftype, FCollectionType)
-        self.subset = normalize_enum(self.subset, ot_sw_io.ProductSubset)
 
         self._database = self.ftype.ot_database()(path=self.path, fs=self.fs)
+
+    @property
+    def handler(self) -> ot_io.FilesDatabase:
+        return self._database
 
     def _request_kwargs(self) -> dict[str, Any]:
         request_kw = {}
@@ -104,7 +111,7 @@ class FileCollectionSource(CnesAltiSource):
 
         return request_kw
 
-    def _initialize(self):
+    def _initialize(self) -> None:
         if self._initialized:
             return
 
@@ -129,7 +136,10 @@ class FileCollectionSource(CnesAltiSource):
         else:
             self._with_ho = False
 
-            data = np.empty(periods.shape[0], dtype=HALF_ORBIT_DTYPE[-2:])
+            data = np.empty(
+                periods.shape[0],
+                dtype=HALF_ORBIT_DTYPE[[CONST_START_TIME, CONST_END_TIME]],
+            )
             data[CONST_START_TIME] = periods[:, 0]
             data[CONST_END_TIME] = periods[:, 1]
 
@@ -143,7 +153,9 @@ class FileCollectionSource(CnesAltiSource):
 
         self._fields = {}
 
-        info: ot_io.GroupMetadata = self._database.variables_info()
+        info: ot_io.GroupMetadata = self._database.variables_info(
+            **self._request_kwargs()
+        )
 
         if info.subgroups:
             msg = "This collection contains subgroups. This is not supported yet."
@@ -161,7 +173,10 @@ class FileCollectionSource(CnesAltiSource):
     def period(self) -> tuple[np.datetime64, np.datetime64]:
         self._initialize()
 
-        return np.min(self._data[CONST_START_TIME]), np.max(self._data[CONST_END_TIME])
+        return (
+            np.min(self._data[CONST_START_TIME].values),
+            np.max(self._data[CONST_END_TIME].values),
+        )
 
     def half_orbit_periods(
         self,
@@ -180,12 +195,15 @@ class FileCollectionSource(CnesAltiSource):
         polygon: str | gpd_t.GeoDataFrame | shg_t.Polygon | None = None,
     ) -> xr.Dataset:
         bbox = polygon_bounding_box(polygon=polygon)
+        request_kwargs = self._request_kwargs()
+
+        if bbox is not None:
+            request_kwargs["bbox"] = bbox
 
         data = self._database.query(
             time=ot_time.Period(start=start, stop=end),
-            bbox=bbox,
             selected_variables=variables,
-            **self._request_kwargs(),
+            **request_kwargs,
         )
 
         data = data or self._empty_dataset()
@@ -200,15 +218,18 @@ class FileCollectionSource(CnesAltiSource):
         polygon: str | gpd_t.GeoDataFrame | shg_t.Polygon | None = None,
     ) -> xr.Dataset:
         self._check_orf()
+        request_kwargs = self._request_kwargs()
 
         bbox = polygon_bounding_box(polygon=polygon)
+
+        if bbox is not None:
+            request_kwargs["bbox"] = bbox
 
         data = self._database.query(
             cycle_number=cycles_nb,
             pass_number=passes_nb,
-            bbox=bbox,
             selected_variables=variables,
-            **self._request_kwargs(),
+            **request_kwargs,
         )
 
         data = data or self._empty_dataset()

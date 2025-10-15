@@ -1,4 +1,6 @@
 __all__ = [
+    "CST_CATALOG_ENV",
+    "CnesAltiCatalog",
     "CnesAltiData",
     "ClsTableSource",
     "CnesAltiVariable",
@@ -6,6 +8,7 @@ __all__ = [
     "ScCollectionSource",
 ]
 
+from .catalog import CST_CATALOG_ENV, CnesAltiCatalog
 from .model import CnesAltiData
 from .sources import (
     ClsTableSource,

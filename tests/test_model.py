@@ -18,11 +18,15 @@ if TYPE_CHECKING:
 
 
 @dc.dataclass(kw_only=True)
-class FakeSource(CnesAltiSource):
+class FakeSource(CnesAltiSource[int]):
     index: str = dc.field(init=False)
 
     def __post_init__(self):
         self.index = self.time
+
+    @property
+    def handler(self) -> int:
+        return 1
 
     def variables(self) -> dict[str, CnesAltiVariable]:
         return {
@@ -77,6 +81,12 @@ class FakeSource(CnesAltiSource):
 SOURCE = FakeSource(time=INDEX, longitude=LONGITUDE, latitude=LATITUDE)
 
 
+def test_handler():
+    data = CnesAltiData(source=SOURCE)
+
+    assert data.handler == 1
+
+
 def test_variables():
     data = CnesAltiData(source=SOURCE)
 
@@ -97,6 +107,8 @@ def test_show_variables():
         SOURCE.longitude,
         SOURCE.latitude,
     }
+
+    assert set(data.show_variables(containing="___")["name"]) == set()
 
 
 def test_periods():

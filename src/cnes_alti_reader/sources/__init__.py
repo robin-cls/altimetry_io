@@ -5,6 +5,7 @@ __all__ = [
     "HALF_ORBIT_DTYPE",
     "CnesAltiSource",
     "CnesAltiVariable",
+    "FCollectionType",
     "FileCollectionSource",
     "ClsTableSource",
     "ScCollectionSource",
@@ -24,9 +25,12 @@ from ._model import (
 LOGGER = logging.getLogger(__name__)
 
 try:
-    from ._file_collection import FileCollectionSource
+    from ._file_collection import FCollectionType, FileCollectionSource
 except ImportError as e:  # pragma: no cover
     LOGGER.debug("Unable to import FileCollectionSource: %s", e)
+    FCollectionType = missing_dependency_class(  # type: ignore[assignment,misc]
+        dependency="ocean_tools", error=str(e)
+    )
     FileCollectionSource = missing_dependency_class(  # type: ignore[assignment,misc]
         dependency="ocean_tools", error=str(e)
     )

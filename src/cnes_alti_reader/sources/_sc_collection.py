@@ -27,7 +27,7 @@ if TYPE_CHECKING:
 
 
 @dc.dataclass(kw_only=True)
-class ScCollectionSource(CnesAltiSource):
+class ScCollectionSource(CnesAltiSource[sc_io.Collection]):
     __doc__ = f"""Source implementation for Swot Calval collections.
 
     Parameters
@@ -54,6 +54,10 @@ class ScCollectionSource(CnesAltiSource):
         self.path = str(self.path)
         self.fs = normalize_file_system(fs=self.fs)
         self._collection = sc_io.Collection(folder=self.path, filesystem=self.fs)
+
+    @property
+    def handler(self) -> sc_io.Collection:
+        return self._collection
 
     def variables(self) -> dict[str, CnesAltiVariable]:
         if self._fields is not None:

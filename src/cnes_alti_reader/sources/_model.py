@@ -3,7 +3,7 @@ from __future__ import annotations
 import abc
 import dataclasses as dc
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Generic, TypeVar
 
 import numpy as np
 import pandas as pd
@@ -41,6 +41,8 @@ class CnesAltiVariable:
     description: str = ""
 
 
+T = TypeVar("T")
+
 DOC_PARAMETERS_ALTI_SOURCE = """
     time
         Name of the time variable.
@@ -54,7 +56,7 @@ DOC_PARAMETERS_ALTI_SOURCE = """
 
 
 @dc.dataclass(kw_only=True)
-class CnesAltiSource(abc.ABC):
+class CnesAltiSource(Generic[T], abc.ABC):
     __doc__ = f"""Altimetric data source interface.
 
     Parameters
@@ -69,6 +71,11 @@ class CnesAltiSource(abc.ABC):
     _fields: dict[str, CnesAltiVariable] | None = dc.field(
         default=None, init=False, repr=False
     )
+
+    @property
+    @abc.abstractmethod
+    def handler(self) -> T:
+        """Source's handler."""
 
     @abc.abstractmethod
     def variables(self) -> dict[str, CnesAltiVariable]:
