@@ -5,7 +5,7 @@ import dataclasses as dc
 import enum
 import os
 import pathlib as pl
-from typing import Any, Mapping
+from typing import Any, Mapping, TypeVar
 
 import fsspec
 import numpy as np
@@ -34,24 +34,66 @@ class SourceType(enum.Enum):
 
 
 @dc.dataclass(kw_only=True)
+class FileSystemConfig:
+    """File system configuration.
+
+    Parameters
+    ----------
+    protocol
+        File system protocol (file, s3, ...)
+    options
+        Additional file system options.
+    """
+
+    protocol: str = "file"
+    options: dict[str, Any] = dc.field(default_factory=dict)
+    fs: fsspec.AbstractFileSystem = dc.field(init=False)
+
+    def __post_init__(self):
+        self.fs = fsspec.filesystem(protocol=self.protocol, **self.options)
+
+
+@dc.dataclass(kw_only=True)
 class CnesAltiCatalogEntry(abc.ABC):
     """Common catalog entry for a CnesAlti source."""
 
     mission: str
     description: str
+    fs: fsspec.AbstractFileSystem | str | None = None
+
+    @classmethod
+    def from_config(
+        cls: type[CnesAltiCatalogEntryType], config: dict[str, Any]
+    ) -> CnesAltiCatalogEntryType:
+        """Instantiate this class from the provided configuration.
+
+        Parameters
+        ----------
+        config
+            Catalog configuration.
+
+        Returns
+        -------
+        :
+            Catalog entry.
+        """
+        config = config.copy()
+
+        if "fs" in config:
+            fs = FileSystemConfig(**config.pop("fs")).fs
+        else:
+            fs = None
+
+        return cls(**config, fs=fs)
 
     @abc.abstractmethod
-    def open_source(
-        self, name: str, fs: fsspec.AbstractFileSystem | str | None = None
-    ) -> CnesAltiSource[Any]:
+    def open_source(self, name: str) -> CnesAltiSource[Any]:
         """Open the source associated to this entry.
 
         Parameters
         ----------
         name
             Entry name.
-        fs
-            File system on which the entry is located.
 
         Returns
         -------
@@ -72,15 +114,18 @@ class CnesAltiCatalogEntry(abc.ABC):
         return False
 
 
+CnesAltiCatalogEntryType = TypeVar(
+    "CnesAltiCatalogEntryType", bound=CnesAltiCatalogEntry
+)
+
+
 @dc.dataclass(kw_only=True)
 class CnesAltiCatalogCLSTables(CnesAltiCatalogEntry):
     """Catalog entry for a CLS Table."""
 
     orf: str | None = None
 
-    def open_source(
-        self, name: str, fs: fsspec.AbstractFileSystem | str | None = None
-    ) -> CnesAltiSource[Any]:
+    def open_source(self, name: str) -> CnesAltiSource[Any]:
         return ClsTableSource(name=name, orf=self.orf)
 
 
@@ -90,10 +135,8 @@ class CnesAltiCatalogScCollection(CnesAltiCatalogEntry):
 
     path: str
 
-    def open_source(
-        self, name: str, fs: fsspec.AbstractFileSystem | str | None = None
-    ) -> CnesAltiSource[Any]:
-        return ScCollectionSource(path=self.path, fs=fs)
+    def open_source(self, name: str) -> CnesAltiSource[Any]:
+        return ScCollectionSource(path=self.path, fs=self.fs)
 
 
 @dc.dataclass(kw_only=True)
@@ -113,12 +156,10 @@ class CnesAltiCatalogFileCollection(CnesAltiCatalogEntry):
     subset: str | None = None
     version: str | None = None
 
-    def open_source(
-        self, name: str, fs: fsspec.AbstractFileSystem | str | None = None
-    ) -> CnesAltiSource[Any]:
+    def open_source(self, name: str) -> CnesAltiSource[Any]:
         return FileCollectionSource(
             path=self.path,
-            fs=fs,
+            fs=self.fs,
             ftype=normalize_enum(self.ftype, FCollectionType),
             index=self.index,
             time=self.time,
@@ -146,9 +187,7 @@ class CnesAltiCatalog:
             os.environ[k] = v
 
     @classmethod
-    def load(
-        cls, path: str | None = None, fs: fsspec.AbstractFileSystem | str | None = None
-    ) -> CnesAltiCatalog:
+    def load(cls, path: str | None = None) -> CnesAltiCatalog:
         """Load a catalog from a YAML file.
 
         Parameters
@@ -157,8 +196,6 @@ class CnesAltiCatalog:
             Catalog file path.
             If None, the environment variable CNES_ALTI_DATA_CATALOG is used.
             If no environment variable is set, the default catalog is used.
-        fs
-            Filesystem configuration used to load datasets.
 
         Returns
         -------
@@ -172,36 +209,14 @@ class CnesAltiCatalog:
         try:
             config = yaml.load(os.path.expandvars(path_norm.read_text()))
 
-            return CnesAltiCatalog.from_config(config=config, fs=fs)
+            return CnesAltiCatalog.from_config(config=config)
         except Exception as error:
             msg = f"Invalid JSON file {path_norm!r}: {error}"
 
             raise RuntimeError(msg) from error
 
-    @staticmethod
-    def _catalog_path(path: str | None = None) -> pl.Path:
-        """Return the catalog path with the following priority:
-
-        * Provided path
-        * Environment variable CNES_ALTI_DATA_CATALOG
-        * Default catalog path
-        """
-        if path is not None:
-            return pl.Path(path)
-
-        if CST_CATALOG_ENV in os.environ:
-            path_norm = pl.Path(os.environ[CST_CATALOG_ENV])
-        else:
-            path_norm = (
-                pl.Path(__file__).parent.parent.parent / "resources" / "catalog.yaml"
-            )
-
-        return path_norm
-
     @classmethod
-    def from_config(
-        cls, config: dict[str, Any], fs: fsspec.AbstractFileSystem | str | None = None
-    ) -> CnesAltiCatalog:
+    def from_config(cls, config: dict[str, Any]) -> CnesAltiCatalog:
         """Instantiate this class from the provided configuration.
 
         Parameters
@@ -224,18 +239,17 @@ class CnesAltiCatalog:
         return cls(
             environment=environment,
             cls_tables={
-                name: CnesAltiCatalogCLSTables(**cfg)
+                name: CnesAltiCatalogCLSTables.from_config(config=cfg)
                 for name, cfg in cls_tables.items()
             },
             sc_collections={
-                name: CnesAltiCatalogScCollection(**cfg)
+                name: CnesAltiCatalogScCollection.from_config(config=cfg)
                 for name, cfg in sc_collections.items()
             },
             file_collections={
-                name: CnesAltiCatalogFileCollection(**cfg)
+                name: CnesAltiCatalogFileCollection.from_config(config=cfg)
                 for name, cfg in file_collections.items()
             },
-            fs=fs,
         )
 
     def open_data(self, dtype: SourceType | str, name: str) -> CnesAltiData:
@@ -268,7 +282,7 @@ class CnesAltiCatalog:
 
                 raise ValueError(msg)
 
-        return CnesAltiData(source=source_info.open_source(name=name, fs=self.fs))
+        return CnesAltiData(source=source_info.open_source(name=name))
 
     def show_dataset(
         self,
@@ -311,23 +325,42 @@ class CnesAltiCatalog:
         }
 
         if not datasets:
-            data = pd.DataFrame([], columns=["name", "description", "units"])
+            data = pd.DataFrame([], columns=["name", "type", "mission", "description"])
         else:
             data = pd.DataFrame(
                 np.array(
                     [
-                        [dtype, name, ds.mission, ds.description]
+                        [name, dtype, ds.mission, ds.description]
                         for (name, dtype), ds in datasets.items()
                     ]
                 ),
-                columns=["type", "name", "mission", "description"],
+                columns=["name", "type", "mission", "description"],
             )
 
         return data
 
+    @staticmethod
+    def _catalog_path(path: str | None = None) -> pl.Path:
+        """Return the catalog path with the following priority:
+
+        * Provided path
+        * Environment variable CNES_ALTI_DATA_CATALOG
+        * Default catalog path
+        """
+        if path is not None:
+            return pl.Path(path)
+
+        if CST_CATALOG_ENV in os.environ:
+            path_norm = pl.Path(os.environ[CST_CATALOG_ENV])
+        else:
+            path_norm = pl.Path(__file__).parent.parent / "resources" / "catalog.yaml"
+
+        return path_norm
+
     def _dtype_entries(
         self, dtype: SourceType | str
     ) -> Mapping[str, CnesAltiCatalogEntry]:
+        """Return the entries of a given type."""
         dtype = normalize_enum(dtype, SourceType)
 
         match dtype:

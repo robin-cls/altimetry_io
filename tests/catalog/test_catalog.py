@@ -6,7 +6,7 @@ def test_catalog_init():
 
     assert catalog
 
-    # TODO: Replace by real tests
+    # TODO: Replace with real tests
     catalog.show_dataset(dtypes="cls_table")
     catalog.show_dataset(dtypes="sc_collection")
     catalog.show_dataset(dtypes="file_collection")

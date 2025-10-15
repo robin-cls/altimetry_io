@@ -138,78 +138,186 @@ sc_collections:
     mission: SWOT
     description: SWOT L3 LR SSH Wind Wave
 
+  SWOT_L2_LR_SSH-UNSMOOTHED-CALVAL:
+    path: swotce-zcollection/calval_lr_ocean_unsmoothed
+    mission: SWOT
+    description: KaRIn LR L2A ‘unsmoothed’ reprocessed products collection for 1-day phase
+    fs:
+      protocol: s3
+      options:
+        anon: true
+        config_kwargs:
+          connect_timeout: 240
+          read_timeout: 240
+        client_kwargs:
+          region_name: us-east-1
+          endpoint_url: https://s3.datalake.cnes.fr
+          verify: false
+
+  SWOT_L2_LR_SSH-UNSMOOTHED-SCIENCE:
+    path: swotce-zcollection/science_lr_ocean_unsmoothed
+    mission: SWOT
+    description: KaRIn LR L2A ‘unsmoothed’ products collection for science phase
+    fs:
+      protocol: s3
+      options:
+        anon: true
+        config_kwargs:
+          connect_timeout: 240
+          read_timeout: 240
+        client_kwargs:
+          region_name: us-east-1
+          endpoint_url: https://s3.datalake.cnes.fr
+          verify: false
+
+  SWOT_L3_LR_SSH-UNSMOOTHED-CALVAL-1.0.2:
+    path: swotce-zcollection-l3/calval_lr_ocean_unsmoothed-v1.0.2
+    mission: SWOT
+    description: KaRIn LR L3 ‘unsmoothed’ reprocessed products collection for 1-day phase
+    fs:
+      protocol: s3
+      options:
+        anon: true
+        config_kwargs:
+          connect_timeout: 240
+          read_timeout: 240
+        client_kwargs:
+          region_name: us-east-1
+          endpoint_url: https://s3.datalake.cnes.fr
+          verify: false
+
+  SWOT_L3_LR_SSH-UNSMOOTHED-SCIENCE-1.0.2:
+    path: swotce-zcollection-l3/science_lr_ocean_unsmoothed-v1.0.2
+    mission: SWOT
+    description: KaRIn LR L3 ‘unsmoothed’ products collection for science phase
+    fs:
+      protocol: s3
+      options:
+        anon: true
+        config_kwargs:
+          connect_timeout: 240
+          read_timeout: 240
+        client_kwargs:
+          region_name: us-east-1
+          endpoint_url: https://s3.datalake.cnes.fr
+          verify: false
+
+  SWOT_L3_LR_SSH-UNSMOOTHED-CALVAL-2.0.1:
+    path: swotce-zcollection-l3/calval_lr_ocean_unsmoothed-v2.0.1
+    mission: SWOT
+    description: KaRIn LR L3 ‘unsmoothed’ reprocessed products collection for 1-day phase
+    fs:
+      protocol: s3
+      options:
+        anon: true
+        config_kwargs:
+          connect_timeout: 240
+          read_timeout: 240
+        client_kwargs:
+          region_name: us-east-1
+          endpoint_url: https://s3.datalake.cnes.fr
+          verify: false
+
+  SWOT_L3_LR_SSH-UNSMOOTHED-SCIENCE-2.0.1:
+    path: swotce-zcollection-l3/science_lr_ocean_unsmoothed-v2.0.1
+    mission: SWOT
+    description: KaRIn LR L3 ‘unsmoothed’ products collection for science phase
+    fs:
+      protocol: s3
+      options:
+        anon: true
+        config_kwargs:
+          connect_timeout: 240
+          read_timeout: 240
+        client_kwargs:
+          region_name: us-east-1
+          endpoint_url: https://s3.datalake.cnes.fr
+          verify: false
+
 file_collections:
   SWOT_L2_LR_SSH-PID0:
     path: /work/HELPDESK_SWOTLR/commun/data/aviso/swot_products/l2_karin/l2_lr_ssh/PID0/
     mission: SWOT
     description: SWOT L2 LR SSH PID0
     ftype: SWOT_L2_LR_SSH
+    index: num_lines
 
   SWOT_L2_LR_SSH-PIC0:
     path: /work/HELPDESK_SWOTLR/commun/data/aviso/swot_products/l2_karin/l2_lr_ssh/PIC0/
     mission: SWOT
     description: SWOT L2 LR SSH PIC0
     ftype: SWOT_L2_LR_SSH
+    index: num_lines
 
   SWOT_L2_LR_SSH-PIC2:
     path: /work/HELPDESK_SWOTLR/commun/data/aviso/swot_products/l2_karin/l2_lr_ssh/PIC2/
     mission: SWOT
     description: SWOT L2 LR SSH PIC2
     ftype: SWOT_L2_LR_SSH
+    index: num_lines
 
   SWOT_L2_LR_SSH-PGC0:
     path: /work/HELPDESK_SWOTLR/commun/data/aviso/swot_products/l2_karin/l2_lr_ssh/PGC0/
     mission: SWOT
     description: SWOT L2 LR SSH PGC0
     ftype: SWOT_L2_LR_SSH
+    index: num_lines
 
   SWOT_L3_LR_SSH-1.0.2-BASIC:
     path: /work/HELPDESK_SWOTLR/commun/data/aviso/swot_products/l3_karin_nadir/l3_lr_ssh/v1_0_2/Basic/
     mission: SWOT
     description: SWOT L3 LR SSH BASIC
     ftype: SWOT_L3_LR_SSH
+    index: num_lines
 
   SWOT_L3_LR_SSH-1.0.2-EXPERT:
     path: /work/HELPDESK_SWOTLR/commun/data/aviso/swot_products/l3_karin_nadir/l3_lr_ssh/v1_0_2/Expert/
     mission: SWOT
     description: SWOT L3 LR SSH EXPERT
     ftype: SWOT_L3_LR_SSH
+    index: num_lines
 
   SWOT_L3_LR_SSH-2.0.1-BASIC:
     path: /work/HELPDESK_SWOTLR/commun/data/aviso/swot_products/l3_karin_nadir/l3_lr_ssh/v2_0_1/Basic/
     mission: SWOT
     description: SWOT L3 LR SSH BASIC
     ftype: SWOT_L3_LR_SSH
+    index: num_lines
 
   SWOT_L3_LR_SSH-2.0.1-EXPERT:
     path: /work/HELPDESK_SWOTLR/commun/data/aviso/swot_products/l3_karin_nadir/l3_lr_ssh/v2_0_1/Expert/
     mission: SWOT
     description: SWOT L3 LR SSH EXPERT
     ftype: SWOT_L3_LR_SSH
+    index: num_lines
 
   SWOT_L3_LR_SSH_WIND_WAVE-CALVAL:
     path: /work/ALT/pva_axp/duacs_proto_karin/data_shared/V2.0_L3_LR_WW_CALVAL/
     mission: SWOT
     description: SWOT L3 LR SSH Wind Wave
     ftype: SWOT_L3_LR_WIND_WAVE
+    index: num_lines
 
   SWOT_L3_LR_SSH_WIND_WAVE-SCIENCE:
     path: /work/ALT/pva_axp/duacs_proto_karin/data_shared/V2.0_L3_LR_WW_SCIENCE/
     mission: SWOT
     description: SWOT L3 LR SSH Wind Wave
     ftype: SWOT_L3_LR_WIND_WAVE
+    index: num_lines
 
   SWOT_L2_NALT_GDR:
     path: /work/HELPDESK_SWOTLR/commun/data/aviso/geophysical-data-record/swot/gdr_f/
     mission: SWOT
     description: SWOT L2 NALT GDR
     ftype: NADIR_L2
+    index: time
 
   SWOT_L2_NALT_IGDR:
     path: /work/HELPDESK_SWOTLR/commun/data/aviso/geophysical-data-record/swot/igdr_f/
     mission: SWOT
     description: SWOT L2 NALT IGDR
     ftype: NADIR_L2
+    index: time
 
   SWOT_L3_NALT_NRT-CALVAL:
     path: /work/HELPDESK_SWOTLR/commun/data/swot/L3_NALT_OGDR/
@@ -217,6 +325,7 @@ file_collections:
     mission: SWOT
     description: SWOT L3 NALT NRT CALVAL
     ftype: NADIR_L3
+    index: time
 
   SWOT_L3_NALT_NRT-SCIENCE:
     path: /work/HELPDESK_SWOTLR/commun/data/swot/L3_NALT_OGDR/
@@ -224,3 +333,4 @@ file_collections:
     mission: SWOT
     description: SWOT L3 NALT NRT SCIENCE
     ftype: NADIR_L3
+    index: time
