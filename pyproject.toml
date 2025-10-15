@@ -25,6 +25,7 @@ dependencies = [
     "numpy",
     "pandas",
     "ruamel.yaml",
+    "s3fs",
     "xarray",
 ]
 
