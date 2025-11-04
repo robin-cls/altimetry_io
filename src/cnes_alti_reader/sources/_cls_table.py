@@ -69,11 +69,9 @@ def _pass_from_indices(
         ]:
             pass_nb = orf_h.passes_per_cycle
 
-        pass_info = orf_h.find_track_info_from_indices(
+        return orf_h.find_track_info_from_indices(
             cycle_nb, pass_nb, extrapolate=False, method=method
         )
-
-    return pass_info
 
 
 @lru_cache(maxsize=10000)
@@ -109,11 +107,7 @@ def _pass_from_date(
         * Pass number
     """
     with OrfContext(name=orf) as orf_h:
-        pass_info = orf_h.find_track_info_from_date(
-            date, extrapolate=False, method=method
-        )
-
-    return pass_info
+        return orf_h.find_track_info_from_date(date, extrapolate=False, method=method)
 
 
 @dc.dataclass

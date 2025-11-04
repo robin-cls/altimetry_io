@@ -106,6 +106,7 @@ select = [
     "RUF", # Ruff-specific rules
     "UP",  # pyupgrade
     "B",   # flake8-bugbear
+    "RET",
 ]
 
 ignore = [
@@ -125,6 +126,7 @@ ignore = [
     "ISC001",
     "ISC002",
     "ARG002", # Unused argument method (inheritance constraint)
+    "B027",   # empty-method-without-abstract-decorator
 ]
 
 [tool.ruff.lint.per-file-ignores]

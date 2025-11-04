@@ -179,6 +179,4 @@ def dataset_select_field_1d(
     else:
         idx_slice = data_slice(values=f_data, val_min=start, val_max=end)
 
-    data_sel = data.isel({index: idx_slice})
-
-    return data_sel
+    return data.isel({index: idx_slice})

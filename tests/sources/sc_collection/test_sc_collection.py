@@ -30,9 +30,8 @@ def swot_collection() -> pl.Path:
 
     sc_root = pl.Path(sc.__file__).parent
     sc_data = sc_root / "tests" / "data"
-    sc_test_collection = sc_data / "collection"
 
-    return sc_test_collection
+    return sc_data / "collection"
 
 
 def test_handler(swot_collection):

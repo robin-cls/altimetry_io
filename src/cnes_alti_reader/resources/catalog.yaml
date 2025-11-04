@@ -102,6 +102,46 @@ cls_tables:
     orf: C_TP
     description: CalVal V
 
+  TABLE_L2E_EN:
+    mission: ENVISAT
+    orf: T_HEN_ORF_FUSION
+    description: L2E
+
+  TABLE_L2E_HEN:
+    mission: ENVISAT
+    orf: T_HEN_ORF_FUSION
+    description: L2E HR
+
+  TABLE_L2E_HAL:
+    mission: Altika
+    orf: T_HAL
+    description: L2E HR
+
+  TABLE_L2E_HS6A_S6PDAP_HR:
+    mission: Sentinel-6A
+    orf: L2E_HS6A_S6PDAP_HR
+    description: L2E PDAP HR
+
+  TABLE_L2E_HS6A_S6PDAP_LR:
+    mission: Sentinel-6A
+    orf: L2E_HS6A_S6PDAP_LR
+    description: L2E PDAP LR
+
+  TABLE_L2P_STC_OCEAN_H2B:
+    mission: HY-2
+    orf: STC_L2P_H2B
+    description: L2P STC
+
+  TABLE_L2P_STC_OCEAN_S3A:
+    mission: Sentinel-3A
+    orf: STC_L2P_S3A
+    description: L2P STC
+
+  TABLE_L2P_STC_OCEAN_S3B:
+    mission: Sentinel-3B
+    orf: STC_L2P_S3B_ORF
+    description: L2P STC
+
 sc_collections:
   SWOT_L2_LR_SSH:
     path: /work/EXPERT_CENTER/mwec/data_guest/zcollection/zcollection_lr_ocean_PGC0

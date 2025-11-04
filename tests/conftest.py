@@ -47,9 +47,8 @@ def dataset():
             ),
         }
     )
-    ds = ds.chunk({INDEX: 3})
 
-    return ds
+    return ds.chunk({INDEX: 3})
 
 
 @pytest.fixture(scope="session")
