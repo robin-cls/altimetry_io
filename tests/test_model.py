@@ -8,8 +8,8 @@ import pandas as pd
 import shapely as shp
 import xarray as xr
 
-from cnes_alti_reader import CnesAltiData
-from cnes_alti_reader.sources import CnesAltiSource, CnesAltiVariable
+from altimetry.io import AltimetryData
+from altimetry.io.sources import AltimetrySource, AltimetryVariable
 from tests.conftest import DATE_END, DATE_START, INDEX, LATITUDE, LONGITUDE
 
 if TYPE_CHECKING:
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
 
 @dc.dataclass(kw_only=True)
-class FakeSource(CnesAltiSource[int]):
+class FakeSource(AltimetrySource[int]):
     index: str = dc.field(init=False)
 
     def __post_init__(self):
@@ -28,15 +28,15 @@ class FakeSource(CnesAltiSource[int]):
     def handler(self) -> int:
         return 1
 
-    def variables(self) -> dict[str, CnesAltiVariable]:
+    def variables(self) -> dict[str, AltimetryVariable]:
         return {
-            "a": CnesAltiVariable(name="a"),
-            "b": CnesAltiVariable(name="b"),
-            self.time: CnesAltiVariable(name=self.time, description="Time coordinate"),
-            self.longitude: CnesAltiVariable(
+            "a": AltimetryVariable(name="a"),
+            "b": AltimetryVariable(name="b"),
+            self.time: AltimetryVariable(name=self.time, description="Time coordinate"),
+            self.longitude: AltimetryVariable(
                 name=self.longitude, description="Longitude coordinate"
             ),
-            self.latitude: CnesAltiVariable(
+            self.latitude: AltimetryVariable(
                 name=self.latitude, description="Latitude coordinate"
             ),
         }
@@ -46,8 +46,8 @@ class FakeSource(CnesAltiSource[int]):
 
     def half_orbit_periods(
         self,
-        ho_min: tuple[int, int] | None = None,
-        ho_max: tuple[int, int] | None = None,
+        half_orbit_min: tuple[int, int] | None = None,
+        half_orbit_max: tuple[int, int] | None = None,
     ) -> pd.DataFrame:
         return pd.DataFrame([1, 2, 3])
 
@@ -82,19 +82,19 @@ SOURCE = FakeSource(time=INDEX, longitude=LONGITUDE, latitude=LATITUDE)
 
 
 def test_handler():
-    data = CnesAltiData(source=SOURCE)
+    data = AltimetryData(source=SOURCE)
 
     assert data.handler == 1
 
 
 def test_variables():
-    data = CnesAltiData(source=SOURCE)
+    data = AltimetryData(source=SOURCE)
 
     assert data.variables() == SOURCE.variables()
 
 
 def test_show_variables():
-    data = CnesAltiData(source=SOURCE)
+    data = AltimetryData(source=SOURCE)
 
     assert set(data.show_variables()["name"]) == set(SOURCE.variables())
 
@@ -112,34 +112,34 @@ def test_show_variables():
 
 
 def test_periods():
-    data = CnesAltiData(source=SOURCE)
+    data = AltimetryData(source=SOURCE)
     assert data.period() == SOURCE.period()
 
 
 def test_half_orbit_periods():
-    data = CnesAltiData(source=SOURCE)
+    data = AltimetryData(source=SOURCE)
     assert data.half_orbit_periods().equals(SOURCE.half_orbit_periods())
 
 
 def test_query_date():
-    data = CnesAltiData(source=SOURCE)
+    data = AltimetryData(source=SOURCE)
     assert data.query_date(start=DATE_START, end=DATE_END).equals(
         SOURCE.query_date(start=DATE_START, end=DATE_END)
     )
 
 
 def test_query_periods():
-    data = CnesAltiData(source=SOURCE)
+    data = AltimetryData(source=SOURCE)
     assert data.query_periods(periods=[(DATE_START, DATE_END)]).equals(
         SOURCE.query_periods(periods=[(DATE_START, DATE_END)])
     )
 
 
 def test_query_orbit():
-    data = CnesAltiData(source=SOURCE)
+    data = AltimetryData(source=SOURCE)
     assert data.query_orbit(cycles_nb=3).equals(SOURCE.query_orbit(cycles_nb=3))
 
-    data = CnesAltiData(source=SOURCE)
+    data = AltimetryData(source=SOURCE)
     assert data.query_orbit(cycles_nb=3, passes_nb=1).equals(
         SOURCE.query_orbit(cycles_nb=3, passes_nb=1)
     )

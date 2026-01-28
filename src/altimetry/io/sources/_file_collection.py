@@ -4,12 +4,12 @@ import dataclasses as dc
 import enum
 from typing import TYPE_CHECKING, Any
 
+import fcollections.core as fc_core
+import fcollections.implementations as fc_impl
+import fcollections.missions as fc_mis
+import fcollections.time as fc_time
 import fsspec
 import numpy as np
-import ocean_tools.io as ot_io
-import ocean_tools.missions as ot_mis
-import ocean_tools.swath.io as ot_sw_io
-import ocean_tools.time as ot_time
 import pandas as pd
 import xarray as xr
 
@@ -21,8 +21,8 @@ from ._model import (
     CONST_START_TIME,
     DOC_PARAMETERS_ALTI_SOURCE,
     HALF_ORBIT_DTYPE,
-    CnesAltiSource,
-    CnesAltiVariable,
+    AltimetrySource,
+    AltimetryVariable,
 )
 
 if TYPE_CHECKING:
@@ -43,20 +43,20 @@ class FCollectionType(enum.Enum):
     NADIR_L2 = enum.auto()
     NADIR_L3 = enum.auto()
 
-    def ot_database(self) -> type[ot_io.FilesDatabase]:
+    def fc_database(self) -> type[fc_core.FilesDatabase]:
         known_collections = {
-            FCollectionType.SWOT_L2_LR_SSH: ot_sw_io.NetcdfFilesDatabaseSwotLRL2,
-            FCollectionType.SWOT_L3_LR_SSH: ot_sw_io.NetcdfFilesDatabaseSwotLRL3,
-            FCollectionType.SWOT_L3_LR_WIND_WAVE: ot_sw_io.NetcdfFilesDatabaseSwotLRWW,
-            FCollectionType.NADIR_L2: ot_sw_io.NetcdfFilesDatabaseL2Nadir,
-            FCollectionType.NADIR_L3: ot_sw_io.NetcdfFilesDatabaseL3Nadir,
+            FCollectionType.SWOT_L2_LR_SSH: fc_impl.NetcdfFilesDatabaseSwotLRL2,
+            FCollectionType.SWOT_L3_LR_SSH: fc_impl.NetcdfFilesDatabaseSwotLRL3,
+            FCollectionType.SWOT_L3_LR_WIND_WAVE: fc_impl.NetcdfFilesDatabaseSwotLRWW,
+            FCollectionType.NADIR_L2: fc_impl.NetcdfFilesDatabaseL2Nadir,
+            FCollectionType.NADIR_L3: fc_impl.NetcdfFilesDatabaseL3Nadir,
         }
 
         return known_collections[self]
 
 
 @dc.dataclass(kw_only=True)
-class FileCollectionSource(CnesAltiSource[ot_io.FilesDatabase]):
+class FileCollectionSource(AltimetrySource[fc_core.FilesDatabase]):
     __doc__ = f"""Source implementation for sets of files.
 
     Parameters
@@ -77,11 +77,11 @@ class FileCollectionSource(CnesAltiSource[ot_io.FilesDatabase]):
     # TODO: Do not set this?
     index: str = "num_lines"
 
-    subset: ot_sw_io.ProductSubset | str | None = None
-    mission: ot_mis.MissionsPhases | str | None = None
+    subset: fc_impl.ProductSubset | str | None = None
+    mission: fc_mis.MissionsPhases | str | None = None
     version: str | None = None
 
-    _database: ot_io.FilesDatabase = dc.field(repr=False, init=False, compare=False)
+    _database: fc_core.FilesDatabase = dc.field(repr=False, init=False, compare=False)
     _initialized: bool = dc.field(repr=False, init=False, compare=False, default=False)
 
     _with_ho: bool = dc.field(repr=False, init=False, compare=False, default=False)
@@ -91,10 +91,10 @@ class FileCollectionSource(CnesAltiSource[ot_io.FilesDatabase]):
         self.fs = normalize_file_system(fs=self.fs)
         self.ftype = normalize_enum(self.ftype, FCollectionType)
 
-        self._database = self.ftype.ot_database()(path=self.path, fs=self.fs)
+        self._database = self.ftype.fc_database()(path=self.path, fs=self.fs)
 
     @property
-    def handler(self) -> ot_io.FilesDatabase:
+    def handler(self) -> fc_core.FilesDatabase:
         return self._database
 
     def _request_kwargs(self) -> dict[str, Any]:
@@ -147,13 +147,13 @@ class FileCollectionSource(CnesAltiSource[ot_io.FilesDatabase]):
 
         self._initialized = True
 
-    def variables(self) -> dict[str, CnesAltiVariable]:
+    def variables(self) -> dict[str, AltimetryVariable]:
         if self._fields is not None:
             return self._fields
 
         self._fields = {}
 
-        info: ot_io.GroupMetadata = self._database.variables_info(
+        info: fc_core.GroupMetadata = self._database.variables_info(
             **self._request_kwargs()
         )
 
@@ -162,7 +162,7 @@ class FileCollectionSource(CnesAltiSource[ot_io.FilesDatabase]):
             raise ValueError(msg)
 
         for variable in info.variables:
-            self._fields[variable.name] = CnesAltiVariable(
+            self._fields[variable.name] = AltimetryVariable(
                 name=variable.name,
                 units=variable.attributes.get("units", ""),
                 description=variable.attributes.get("comment", ""),
@@ -180,8 +180,8 @@ class FileCollectionSource(CnesAltiSource[ot_io.FilesDatabase]):
 
     def half_orbit_periods(
         self,
-        ho_min: tuple[int, int] | None = None,
-        ho_max: tuple[int, int] | None = None,
+        half_orbit_min: tuple[int, int] | None = None,
+        half_orbit_max: tuple[int, int] | None = None,
     ) -> pd.DataFrame:
         self._check_orf()
 
@@ -201,7 +201,7 @@ class FileCollectionSource(CnesAltiSource[ot_io.FilesDatabase]):
             request_kwargs["bbox"] = bbox
 
         data = self._database.query(
-            time=ot_time.Period(start=start, stop=end),
+            time=fc_time.Period(start=start, stop=end),
             selected_variables=variables,
             **request_kwargs,
         )

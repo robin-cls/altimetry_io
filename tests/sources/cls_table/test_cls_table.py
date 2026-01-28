@@ -3,7 +3,7 @@ import logging
 import numpy as np
 import pytest
 
-from cnes_alti_reader.sources import ClsTableSource
+from altimetry.io.sources import ClsTableSource
 from tests.conftest import (
     DATE_END,
     DATE_START,
@@ -65,18 +65,18 @@ def test_half_orbit_periods(table_name, orf_name):
         np.array([[1, 1], [1, 2], [3, 1], [3, 3]]),
     )
 
-    periods = source.half_orbit_periods(ho_min=(3, 2))
+    periods = source.half_orbit_periods(half_orbit_min=(3, 2))
     assert np.array_equal(
         periods[["cycle_number", "pass_number"]].to_numpy(), np.array([[3, 3]])
     )
 
-    periods = source.half_orbit_periods(ho_max=(3, 2))
+    periods = source.half_orbit_periods(half_orbit_max=(3, 2))
     assert np.array_equal(
         periods[["cycle_number", "pass_number"]].to_numpy(),
         np.array([[1, 1], [1, 2], [3, 1]]),
     )
 
-    periods = source.half_orbit_periods(ho_min=(2, 1), ho_max=(3, 3))
+    periods = source.half_orbit_periods(half_orbit_min=(2, 1), half_orbit_max=(3, 3))
     assert np.array_equal(
         periods[["cycle_number", "pass_number"]].to_numpy(), np.array([[3, 1], [3, 3]])
     )

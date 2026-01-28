@@ -2,7 +2,7 @@
 {% set pyproject = load_file_data("pyproject.toml") %}
 
 package:
-  name: cnes_alti_reader
+  name: altimetry-io
   version: {{ pyproject["project"]["version"] }}
 
 source:

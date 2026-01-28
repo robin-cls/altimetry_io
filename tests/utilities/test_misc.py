@@ -8,7 +8,7 @@ import pytest
 import shapely as shp
 import xarray as xr
 
-from cnes_alti_reader.utilities import (
+from altimetry.io.utilities import (
     missing_dependency_class,
     normalize_enum,
     normalize_file_system,

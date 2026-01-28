@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 
-from cnes_alti_reader.sources import CnesAltiSource, CnesAltiVariable
+from altimetry.io.sources import AltimetrySource, AltimetryVariable
 
 if TYPE_CHECKING:
     import geopandas as gpd_t
@@ -19,14 +19,14 @@ LOGGER = logging.getLogger(__name__)
 
 
 @dc.dataclass
-class CnesAltiData:
-    source: CnesAltiSource
+class AltimetryData:
+    source: AltimetrySource
 
     @property
     def handler(self) -> Any:
         return self.source.handler
 
-    def variables(self) -> dict[str, CnesAltiVariable]:
+    def variables(self) -> dict[str, AltimetryVariable]:
         """Variables contained in this altimetric data source."""
         return self.source.variables()
 
@@ -72,16 +72,16 @@ class CnesAltiData:
 
     def half_orbit_periods(
         self,
-        ho_min: tuple[int, int] | None = None,
-        ho_max: tuple[int, int] | None = None,
+        half_orbit_min: tuple[int, int] | None = None,
+        half_orbit_max: tuple[int, int] | None = None,
     ) -> pd.DataFrame:
         """Half orbit periods covered by this altimetric data source.
 
         Parameters
         ----------
-        ho_min
+        half_orbit_min
             Tuple of (cycle_number, pass_number) for the minimum half orbit.
-        ho_max
+        half_orbit_max
             Tuple of (cycle_number, pass_number) for the maximum half orbit.
 
         Returns
@@ -89,7 +89,9 @@ class CnesAltiData:
         :
             Set of half orbit periods.
         """
-        return self.source.half_orbit_periods(ho_min=ho_min, ho_max=ho_max)
+        return self.source.half_orbit_periods(
+            half_orbit_min=half_orbit_min, half_orbit_max=half_orbit_max
+        )
 
     def query_date(
         self,

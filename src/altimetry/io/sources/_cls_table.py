@@ -16,8 +16,8 @@ import xarray as xr
 from ._model import (
     DOC_PARAMETERS_ALTI_SOURCE,
     HALF_ORBIT_DTYPE,
-    CnesAltiSource,
-    CnesAltiVariable,
+    AltimetrySource,
+    AltimetryVariable,
 )
 
 if TYPE_CHECKING:
@@ -150,7 +150,7 @@ class TableContext(AbstractContextManager):
 
 
 @dc.dataclass(kw_only=True)
-class ClsTableSource(CnesAltiSource[cls_t.TableMeasure]):
+class ClsTableSource(AltimetrySource[cls_t.TableMeasure]):
     __doc__ = f"""Source implementation for CLS tables.
 
     Parameters
@@ -179,18 +179,18 @@ class ClsTableSource(CnesAltiSource[cls_t.TableMeasure]):
     def handler(self) -> cls_t.TableMeasure:
         return cls_t.TableMeasure(self.name)
 
-    def variables(self) -> dict[str, CnesAltiVariable]:
+    def variables(self) -> dict[str, AltimetryVariable]:
         if self._fields is not None:
             return self._fields
 
         with TableContext(name=self.name) as table:
             self._fields = {
-                f.name: CnesAltiVariable(
+                f.name: AltimetryVariable(
                     name=f.name, units=f.unit, description=f.description
                 )
                 for f in table.fields
             }
-        self._fields[self.time] = CnesAltiVariable(
+        self._fields[self.time] = AltimetryVariable(
             name=self.time, units="", description=self.time
         )
 
@@ -209,26 +209,31 @@ class ClsTableSource(CnesAltiSource[cls_t.TableMeasure]):
 
     def half_orbit_periods(
         self,
-        ho_min: tuple[int, int] | None = None,
-        ho_max: tuple[int, int] | None = None,
+        half_orbit_min: tuple[int, int] | None = None,
+        half_orbit_max: tuple[int, int] | None = None,
     ) -> pd.DataFrame:
         self._check_orf()
         self._set_orf_info()
 
-        ho_min_t: tuple[int, int] = ho_min or (self._orf_first_cycle, 1)
-        ho_max_t: tuple[int, int] = ho_max or (
+        half_orbit_min_t: tuple[int, int] = half_orbit_min or (self._orf_first_cycle, 1)
+        half_orbit_max_t: tuple[int, int] = half_orbit_max or (
             self._orf_last_cycle,
             self._orf_passes_per_cycle,
         )
 
         cycles_list = []
         pass_info = self.pass_from_indices(
-            cycle_nb=ho_min_t[0], pass_nb=ho_min_t[1], method="after_or_equal"
+            cycle_nb=half_orbit_min_t[0],
+            pass_nb=half_orbit_min_t[1],
+            method="after_or_equal",
         )
 
         while pass_info is not None and (
-            pass_info[0] < ho_max_t[0]
-            or (pass_info[0] == ho_max_t[0] and pass_info[1] <= ho_max_t[1])
+            pass_info[0] < half_orbit_max_t[0]
+            or (
+                pass_info[0] == half_orbit_max_t[0]
+                and pass_info[1] <= half_orbit_max_t[1]
+            )
         ):
             cycles_list.append((pass_info[0], pass_info[1], pass_info[2], pass_info[3]))
             pass_info = self.pass_from_indices(

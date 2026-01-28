@@ -12,13 +12,13 @@ import pandas as pd
 import swot_calval.io as sc_io
 import xarray as xr
 
-from cnes_alti_reader.utilities import (
+from altimetry.io.utilities import (
     dataset_select_field_1d,
     normalize_file_system,
     normalize_polygon,
 )
 
-from ._model import DOC_PARAMETERS_ALTI_SOURCE, CnesAltiSource, CnesAltiVariable
+from ._model import DOC_PARAMETERS_ALTI_SOURCE, AltimetrySource, AltimetryVariable
 
 if TYPE_CHECKING:
     import geopandas as gpd_t
@@ -27,7 +27,7 @@ if TYPE_CHECKING:
 
 
 @dc.dataclass(kw_only=True)
-class ScCollectionSource(CnesAltiSource[sc_io.Collection]):
+class ScCollectionSource(AltimetrySource[sc_io.Collection]):
     __doc__ = f"""Source implementation for Swot Calval collections.
 
     Parameters
@@ -59,7 +59,7 @@ class ScCollectionSource(CnesAltiSource[sc_io.Collection]):
     def handler(self) -> sc_io.Collection:
         return self._collection
 
-    def variables(self) -> dict[str, CnesAltiVariable]:
+    def variables(self) -> dict[str, AltimetryVariable]:
         if self._fields is not None:
             return self._fields
 
@@ -67,7 +67,7 @@ class ScCollectionSource(CnesAltiSource[sc_io.Collection]):
 
         for f in self._collection.variables().values():
             attrs = {attr.name: attr.value for attr in f.attrs}
-            self._fields[f.name] = CnesAltiVariable(
+            self._fields[f.name] = AltimetryVariable(
                 name=f.name,
                 units=attrs.get("units", ""),
                 description=attrs.get("comment", ""),
@@ -80,21 +80,23 @@ class ScCollectionSource(CnesAltiSource[sc_io.Collection]):
 
     def half_orbit_periods(
         self,
-        ho_min: tuple[int, int] | None = None,
-        ho_max: tuple[int, int] | None = None,
+        half_orbit_min: tuple[int, int] | None = None,
+        half_orbit_max: tuple[int, int] | None = None,
     ) -> pd.DataFrame:
         data = self._collection.half_orbit_periods()
         mask = np.full(len(data), True)
 
-        if ho_min is not None:
+        if half_orbit_min is not None:
             mask = (
-                (data["cycle_number"] == ho_min[0]) & (data["pass_number"] >= ho_min[1])
-            ) | (data["cycle_number"] > ho_min[0])
+                (data["cycle_number"] == half_orbit_min[0])
+                & (data["pass_number"] >= half_orbit_min[1])
+            ) | (data["cycle_number"] > half_orbit_min[0])
 
-        if ho_max is not None:
+        if half_orbit_max is not None:
             mask &= (
-                (data["cycle_number"] == ho_max[0]) & (data["pass_number"] <= ho_max[1])
-            ) | (data["cycle_number"] < ho_max[0])
+                (data["cycle_number"] == half_orbit_max[0])
+                & (data["pass_number"] <= half_orbit_max[1])
+            ) | (data["cycle_number"] < half_orbit_max[0])
 
         return pd.DataFrame(data[mask])
 

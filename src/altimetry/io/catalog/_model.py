@@ -13,15 +13,15 @@ import numpy as np
 import pandas as pd
 import ruamel.yaml
 
-from cnes_alti_reader.model import CnesAltiData
-from cnes_alti_reader.sources import (
+from altimetry.io.model import AltimetryData
+from altimetry.io.sources import (
+    AltimetrySource,
     ClsTableSource,
-    CnesAltiSource,
     FCollectionType,
     FileCollectionSource,
     ScCollectionSource,
 )
-from cnes_alti_reader.utilities import normalize_enum, normalize_file_system
+from altimetry.io.utilities import normalize_enum, normalize_file_system
 
 CST_CATALOG_ENV = "CNES_ALTI_DATA_CATALOG"
 
@@ -55,8 +55,8 @@ class FileSystemConfig:
 
 
 @dc.dataclass(kw_only=True)
-class CnesAltiCatalogEntry(abc.ABC):
-    """Common catalog entry for a CnesAlti source."""
+class AltimetryCatalogEntry(abc.ABC):
+    """Common catalog entry for an Altimetry source."""
 
     mission: str
     description: str
@@ -64,8 +64,8 @@ class CnesAltiCatalogEntry(abc.ABC):
 
     @classmethod
     def from_config(
-        cls: type[CnesAltiCatalogEntryType], config: dict[str, Any]
-    ) -> CnesAltiCatalogEntryType:
+        cls: type[AltimetryCatalogEntryType], config: dict[str, Any]
+    ) -> AltimetryCatalogEntryType:
         """Instantiate this class from the provided configuration.
 
         Parameters
@@ -88,7 +88,7 @@ class CnesAltiCatalogEntry(abc.ABC):
         return cls(**config, fs=fs)
 
     @abc.abstractmethod
-    def open_source(self, name: str) -> CnesAltiSource[Any]:
+    def open_source(self, name: str) -> AltimetrySource[Any]:
         """Open the source associated to this entry.
 
         Parameters
@@ -115,33 +115,33 @@ class CnesAltiCatalogEntry(abc.ABC):
         return False
 
 
-CnesAltiCatalogEntryType = TypeVar(
-    "CnesAltiCatalogEntryType", bound=CnesAltiCatalogEntry
+AltimetryCatalogEntryType = TypeVar(
+    "AltimetryCatalogEntryType", bound=AltimetryCatalogEntry
 )
 
 
 @dc.dataclass(kw_only=True)
-class CnesAltiCatalogCLSTables(CnesAltiCatalogEntry):
+class AltimetryCatalogCLSTables(AltimetryCatalogEntry):
     """Catalog entry for a CLS Table."""
 
     orf: str | None = None
 
-    def open_source(self, name: str) -> CnesAltiSource[Any]:
+    def open_source(self, name: str) -> AltimetrySource[Any]:
         return ClsTableSource(name=name, orf=self.orf)
 
 
 @dc.dataclass(kw_only=True)
-class CnesAltiCatalogScCollection(CnesAltiCatalogEntry):
+class AltimetryCatalogScCollection(AltimetryCatalogEntry):
     """Catalog entry for a Swot Calval collection."""
 
     path: str
 
-    def open_source(self, name: str) -> CnesAltiSource[Any]:
+    def open_source(self, name: str) -> AltimetrySource[Any]:
         return ScCollectionSource(path=self.path, fs=self.fs)
 
 
 @dc.dataclass(kw_only=True)
-class CnesAltiCatalogFileCollection(CnesAltiCatalogEntry):
+class AltimetryCatalogFileCollection(AltimetryCatalogEntry):
     """Catalog entry for a file collection."""
 
     path: str
@@ -157,7 +157,7 @@ class CnesAltiCatalogFileCollection(CnesAltiCatalogEntry):
     subset: str | None = None
     version: str | None = None
 
-    def open_source(self, name: str) -> CnesAltiSource[Any]:
+    def open_source(self, name: str) -> AltimetrySource[Any]:
         return FileCollectionSource(
             path=self.path,
             fs=self.fs,
@@ -172,13 +172,13 @@ class CnesAltiCatalogFileCollection(CnesAltiCatalogEntry):
 
 
 @dc.dataclass(kw_only=True)
-class CnesAltiCatalog:
-    """Catalog of CnesAlti sources."""
+class AltimetryCatalog:
+    """Catalog of Altimetry sources."""
 
     environment: dict[str, str] = dc.field(default_factory=dict)
-    cls_tables: dict[str, CnesAltiCatalogCLSTables]
-    sc_collections: dict[str, CnesAltiCatalogScCollection]
-    file_collections: dict[str, CnesAltiCatalogFileCollection]
+    cls_tables: dict[str, AltimetryCatalogCLSTables]
+    sc_collections: dict[str, AltimetryCatalogScCollection]
+    file_collections: dict[str, AltimetryCatalogFileCollection]
     fs: fsspec.AbstractFileSystem | str | None = dc.field(default=None, compare=False)
 
     def __post_init__(self):
@@ -188,7 +188,7 @@ class CnesAltiCatalog:
             os.environ[k] = v
 
     @classmethod
-    def load(cls, path: str | None = None) -> CnesAltiCatalog:
+    def load(cls, path: str | None = None) -> AltimetryCatalog:
         """Load a catalog from a YAML file.
 
         Parameters
@@ -210,14 +210,14 @@ class CnesAltiCatalog:
         try:
             config = yaml.load(os.path.expandvars(path_norm.read_text()))
 
-            return CnesAltiCatalog.from_config(config=config)
+            return AltimetryCatalog.from_config(config=config)
         except Exception as error:
             msg = f"Invalid JSON file {path_norm!r}: {error}"
 
             raise RuntimeError(msg) from error
 
     @classmethod
-    def from_config(cls, config: dict[str, Any]) -> CnesAltiCatalog:
+    def from_config(cls, config: dict[str, Any]) -> AltimetryCatalog:
         """Instantiate this class from the provided configuration.
 
         Parameters
@@ -240,20 +240,20 @@ class CnesAltiCatalog:
         return cls(
             environment=environment,
             cls_tables={
-                name: CnesAltiCatalogCLSTables.from_config(config=cfg)
+                name: AltimetryCatalogCLSTables.from_config(config=cfg)
                 for name, cfg in cls_tables.items()
             },
             sc_collections={
-                name: CnesAltiCatalogScCollection.from_config(config=cfg)
+                name: AltimetryCatalogScCollection.from_config(config=cfg)
                 for name, cfg in sc_collections.items()
             },
             file_collections={
-                name: CnesAltiCatalogFileCollection.from_config(config=cfg)
+                name: AltimetryCatalogFileCollection.from_config(config=cfg)
                 for name, cfg in file_collections.items()
             },
         )
 
-    def open_data(self, dtype: SourceType | str, name: str) -> CnesAltiData:
+    def open_data(self, dtype: SourceType | str, name: str) -> AltimetryData:
         """Open a dataset.
 
         Parameters
@@ -269,7 +269,7 @@ class CnesAltiCatalog:
             Opened dataset.
         """
         dtype = normalize_enum(dtype, SourceType)
-        source_info: CnesAltiCatalogEntry
+        source_info: AltimetryCatalogEntry
 
         match dtype:
             case SourceType.CLS_TABLE:
@@ -283,18 +283,18 @@ class CnesAltiCatalog:
 
                 raise ValueError(msg)
 
-        return CnesAltiData(source=source_info.open_source(name=name))
+        return AltimetryData(source=source_info.open_source(name=name))
 
     def show_dataset(
         self,
-        dtypes: list[SourceType | str] | SourceType | str | None = None,
+        dtype: list[SourceType | str] | SourceType | str | None = None,
         containing: str | None = None,
     ) -> pd.DataFrame:
         """Display dataset containing a given string as a DataFrame.
 
         Parameters
         ----------
-        dtypes
+        dtype
             Types of dataset (single one, list of types or None for all types).
         containing
             String contained in dataset's mission name or descriptions.
@@ -304,23 +304,23 @@ class CnesAltiCatalog:
         :
             List of matching datasets.
         """
-        dtypes_norm: list[SourceType] = []
+        dtype_norm: list[SourceType] = []
 
-        match dtypes:
+        match dtype:
             case None:
-                dtypes_norm = [
+                dtype_norm = [
                     SourceType.CLS_TABLE,
                     SourceType.SC_COLLECTION,
                     SourceType.FILE_COLLECTION,
                 ]
             case SourceType() | str():
-                dtypes_norm = [normalize_enum(dtypes, SourceType)]
+                dtype_norm = [normalize_enum(dtype, SourceType)]
             case list():
-                dtypes_norm = [normalize_enum(dtype, SourceType) for dtype in dtypes]
+                dtype_norm = [normalize_enum(dtype, SourceType) for dtype in dtype]
 
-        datasets: dict[tuple[str, str], CnesAltiCatalogEntry] = {
+        datasets: dict[tuple[str, str], AltimetryCatalogEntry] = {
             (name, xx.name): ds
-            for xx in dtypes_norm
+            for xx in dtype_norm
             for name, ds in self._dtype_entries(dtype=xx).items()
             if ds.match_key(key=containing)
         }
@@ -360,7 +360,7 @@ class CnesAltiCatalog:
 
     def _dtype_entries(
         self, dtype: SourceType | str
-    ) -> Mapping[str, CnesAltiCatalogEntry]:
+    ) -> Mapping[str, AltimetryCatalogEntry]:
         """Return the entries of a given type."""
         dtype = normalize_enum(dtype, SourceType)
 
@@ -371,3 +371,6 @@ class CnesAltiCatalog:
                 return self.sc_collections
             case SourceType.FILE_COLLECTION:
                 return self.file_collections
+
+        msg = f"Unsupported dtype: {dtype}"
+        raise ValueError(msg)

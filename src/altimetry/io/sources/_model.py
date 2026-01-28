@@ -3,13 +3,13 @@ from __future__ import annotations
 import abc
 import dataclasses as dc
 import logging
-from typing import TYPE_CHECKING, Generic, TypeVar
+from typing import TYPE_CHECKING, Generic, LiteralString, TypeVar
 
 import numpy as np
 import pandas as pd
 import xarray as xr
 
-from cnes_alti_reader.utilities import restrict_to_polygon
+from altimetry.io.utilities import restrict_to_polygon
 
 if TYPE_CHECKING:
     import geopandas as gpd_t
@@ -33,7 +33,7 @@ HALF_ORBIT_DTYPE = np.dtype(
 
 
 @dc.dataclass(kw_only=True)
-class CnesAltiVariable:
+class AltimetryVariable:
     """A variable with its units and description."""
 
     name: str
@@ -43,7 +43,7 @@ class CnesAltiVariable:
 
 T = TypeVar("T")
 
-DOC_PARAMETERS_ALTI_SOURCE = """
+DOC_PARAMETERS_ALTI_SOURCE: LiteralString = """
     time
         Name of the time variable.
     longitude
@@ -56,7 +56,7 @@ DOC_PARAMETERS_ALTI_SOURCE = """
 
 
 @dc.dataclass(kw_only=True)
-class CnesAltiSource(Generic[T], abc.ABC):
+class AltimetrySource(Generic[T], abc.ABC):
     __doc__ = f"""Altimetric data source interface.
 
     Parameters
@@ -68,7 +68,7 @@ class CnesAltiSource(Generic[T], abc.ABC):
     latitude: str
     index: str
 
-    _fields: dict[str, CnesAltiVariable] | None = dc.field(
+    _fields: dict[str, AltimetryVariable] | None = dc.field(
         default=None, init=False, repr=False
     )
 
@@ -78,7 +78,7 @@ class CnesAltiSource(Generic[T], abc.ABC):
         """Source's handler."""
 
     @abc.abstractmethod
-    def variables(self) -> dict[str, CnesAltiVariable]:
+    def variables(self) -> dict[str, AltimetryVariable]:
         """Variables contained in this source."""
 
     @abc.abstractmethod
@@ -88,16 +88,16 @@ class CnesAltiSource(Generic[T], abc.ABC):
     @abc.abstractmethod
     def half_orbit_periods(
         self,
-        ho_min: tuple[int, int] | None = None,
-        ho_max: tuple[int, int] | None = None,
+        half_orbit_min: tuple[int, int] | None = None,
+        half_orbit_max: tuple[int, int] | None = None,
     ) -> pd.DataFrame:
         """Half orbit periods covered by this altimetric data source.
 
         Parameters
         ----------
-        ho_min
+        half_orbit_min
             Tuple of (cycle_number, pass_number) for the minimum half orbit.
-        ho_max
+        half_orbit_max
             Tuple of (cycle_number, pass_number) for the maximum half orbit.
 
         Returns

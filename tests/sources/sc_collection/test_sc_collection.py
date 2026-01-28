@@ -5,8 +5,8 @@ import pandas as pd
 import pytest
 import shapely as shp
 
-from cnes_alti_reader.sources import ScCollectionSource
-from cnes_alti_reader.utilities import restrict_to_polygon
+from altimetry.io.sources import ScCollectionSource
+from altimetry.io.utilities import restrict_to_polygon
 
 try:
     import swot_calval as sc
@@ -70,19 +70,19 @@ def test_half_orbit_periods(swot_collection):
 
     assert ho_periods.equals(ho_ref)
 
-    ho_periods = source.half_orbit_periods(ho_min=(1, 3))
+    ho_periods = source.half_orbit_periods(half_orbit_min=(1, 3))
     assert ho_periods.equals(ho_ref[2:].reset_index(drop=True))
 
-    ho_periods = source.half_orbit_periods(ho_max=(1, 3))
+    ho_periods = source.half_orbit_periods(half_orbit_max=(1, 3))
     assert ho_periods.equals(ho_ref[:3].reset_index(drop=True))
 
-    ho_periods = source.half_orbit_periods(ho_min=(2, 1))
+    ho_periods = source.half_orbit_periods(half_orbit_min=(2, 1))
     assert len(ho_periods) == 0
 
-    ho_periods = source.half_orbit_periods(ho_max=(1, 0))
+    ho_periods = source.half_orbit_periods(half_orbit_max=(1, 0))
     assert len(ho_periods) == 0
 
-    ho_periods = source.half_orbit_periods(ho_min=(1, 3), ho_max=(1, 3))
+    ho_periods = source.half_orbit_periods(half_orbit_min=(1, 3), half_orbit_max=(1, 3))
     assert ho_periods.equals(ho_ref[2:3].reset_index(drop=True))
 
 

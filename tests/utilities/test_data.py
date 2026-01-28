@@ -3,7 +3,7 @@ import numpy as np
 import pytest
 import xarray as xr
 
-from cnes_alti_reader.utilities import (
+from altimetry.io.utilities import (
     data_slice,
     data_slice_include_end,
     dataset_select_field_1d,

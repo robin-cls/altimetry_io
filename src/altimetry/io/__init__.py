@@ -1,18 +1,18 @@
 __all__ = [
     "CST_CATALOG_ENV",
+    "AltimetryCatalog",
+    "AltimetryData",
+    "AltimetryVariable",
     "ClsTableSource",
-    "CnesAltiCatalog",
-    "CnesAltiData",
-    "CnesAltiVariable",
     "FileCollectionSource",
     "ScCollectionSource",
 ]
 
-from .catalog import CST_CATALOG_ENV, CnesAltiCatalog
-from .model import CnesAltiData
+from .catalog import CST_CATALOG_ENV, AltimetryCatalog
+from .model import AltimetryData
 from .sources import (
+    AltimetryVariable,
     ClsTableSource,
-    CnesAltiVariable,
     FileCollectionSource,
     ScCollectionSource,
 )

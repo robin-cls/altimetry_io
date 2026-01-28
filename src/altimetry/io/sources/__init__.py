@@ -3,9 +3,9 @@
 __all__ = [
     "DOC_PARAMETERS_ALTI_SOURCE",
     "HALF_ORBIT_DTYPE",
+    "AltimetrySource",
+    "AltimetryVariable",
     "ClsTableSource",
-    "CnesAltiSource",
-    "CnesAltiVariable",
     "FCollectionType",
     "FileCollectionSource",
     "ScCollectionSource",
@@ -13,13 +13,13 @@ __all__ = [
 
 import logging
 
-from cnes_alti_reader.utilities import missing_dependency_class
+from altimetry.io.utilities import missing_dependency_class
 
 from ._model import (
     DOC_PARAMETERS_ALTI_SOURCE,
     HALF_ORBIT_DTYPE,
-    CnesAltiSource,
-    CnesAltiVariable,
+    AltimetrySource,
+    AltimetryVariable,
 )
 
 LOGGER = logging.getLogger(__name__)
@@ -29,10 +29,10 @@ try:
 except ImportError as e:  # pragma: no cover
     LOGGER.debug("Unable to import FileCollectionSource: %s", e)
     FCollectionType = missing_dependency_class(  # type: ignore[assignment,misc]
-        dependency="ocean_tools", error=str(e)
+        dependency="fcollections", error=str(e)
     )
     FileCollectionSource = missing_dependency_class(  # type: ignore[assignment,misc]
-        dependency="ocean_tools", error=str(e)
+        dependency="fcollections", error=str(e)
     )
 
 

@@ -3,7 +3,7 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "cnes_alti_reader"
+name = "altimetry-io"
 authors = [
     {name = "CNES", email = "cnes@cnes.fr"},
 ]
@@ -19,7 +19,7 @@ classifiers = [
 ]
 
 requires-python = ">=3.11"
-version = "0.1"
+version = "0.2"
 dependencies = [
     "fsspec",
     "numpy",
@@ -37,7 +37,7 @@ polygon = [
 ]
 sources = [
     "cls_tables",
-    "ocean_tools",
+    "files-collections",
     "swot_calval",
 ]
 tests = [
@@ -87,8 +87,8 @@ exclude_also = [
 ]
 
 [tool.ruff]
-src = ["src/cnes_alti_reader"]
-include = ["src/cnes_alti_reader/**/*.py", "tests/**/*.py", "docs/**/*.py"]
+src = ["src/altimetry/io"]
+include = ["src/altimetry/io/**/*.py", "tests/**/*.py", "docs/**/*.py"]
 
 [tool.ruff.lint]
 select = [
@@ -138,4 +138,4 @@ ignore = [
 ]
 
 [tool.ruff.lint.isort]
-known-first-party = ["cnes_alti_reader", "tests"]
+known-first-party = ["altimetry", "tests"]
