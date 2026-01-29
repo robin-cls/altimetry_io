@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import dataclasses as dc
 import enum
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 import fcollections.core as fc_core
 import fcollections.implementations as fc_impl
@@ -13,7 +13,12 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 
-from ..utilities import normalize_enum, normalize_file_system, polygon_bounding_box
+from ..utilities import (
+    PolygonLike,
+    normalize_enum,
+    normalize_file_system,
+    polygon_bounding_box,
+)
 from ._model import (
     CONST_CYCLE_NUMBER,
     CONST_END_TIME,
@@ -24,10 +29,6 @@ from ._model import (
     AltimetrySource,
     AltimetryVariable,
 )
-
-if TYPE_CHECKING:
-    import geopandas as gpd_t
-    import shapely.geometry as shg_t
 
 OT_CONST_TIME = "time"
 OT_CONST_CYCLE_NUMBER = "cycle_number"
@@ -192,10 +193,16 @@ class FileCollectionSource(AltimetrySource[fc_core.FilesDatabase]):
         start: np.datetime64,
         end: np.datetime64,
         variables: list[str] | None = None,
-        polygon: str | gpd_t.GeoDataFrame | shg_t.Polygon | None = None,
+        polygon: PolygonLike | None = None,
+        backend_kwargs: dict[str, Any] | None = None,
     ) -> xr.Dataset:
-        bbox = polygon_bounding_box(polygon=polygon)
-        request_kwargs = self._request_kwargs()
+        if backend_kwargs is None:
+            backend_kwargs = {}
+        request_kwargs = {**self._request_kwargs(), **backend_kwargs}
+
+        bbox = polygon
+        if not isinstance(polygon, tuple):
+            bbox = polygon_bounding_box(polygon=polygon)
 
         if bbox is not None:
             request_kwargs["bbox"] = bbox
@@ -206,21 +213,25 @@ class FileCollectionSource(AltimetrySource[fc_core.FilesDatabase]):
             **request_kwargs,
         )
 
-        data = data or self._empty_dataset()
-
-        return self.restrict_to_polygon(data=data, polygon=polygon)
+        return data or self._empty_dataset()
 
     def query_orbit(
         self,
         cycles_nb: int | list[int],
         passes_nb: int | list[int] | None = None,
         variables: list[str] | None = None,
-        polygon: str | gpd_t.GeoDataFrame | shg_t.Polygon | None = None,
+        polygon: PolygonLike | None = None,
+        backend_kwargs: dict[str, Any] | None = None,
     ) -> xr.Dataset:
         self._check_orf()
-        request_kwargs = self._request_kwargs()
 
-        bbox = polygon_bounding_box(polygon=polygon)
+        if backend_kwargs is None:
+            backend_kwargs = {}
+        request_kwargs = {**self._request_kwargs(), **backend_kwargs}
+
+        bbox = polygon
+        if not isinstance(polygon, tuple):
+            bbox = polygon_bounding_box(polygon=polygon)
 
         if bbox is not None:
             request_kwargs["bbox"] = bbox
@@ -232,9 +243,7 @@ class FileCollectionSource(AltimetrySource[fc_core.FilesDatabase]):
             **request_kwargs,
         )
 
-        data = data or self._empty_dataset()
-
-        return self.restrict_to_polygon(data=data, polygon=polygon)
+        return data or self._empty_dataset()
 
     def _check_orf(self):
         self._initialize()

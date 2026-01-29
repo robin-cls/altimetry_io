@@ -6,23 +6,20 @@ import dataclasses as dc
 import logging
 from contextlib import AbstractContextManager
 from functools import lru_cache
-from typing import TYPE_CHECKING
+from typing import Any
 
 import cls_tables as cls_t
 import numpy as np
 import pandas as pd
 import xarray as xr
 
+from ..utilities import PolygonLike
 from ._model import (
     DOC_PARAMETERS_ALTI_SOURCE,
     HALF_ORBIT_DTYPE,
     AltimetrySource,
     AltimetryVariable,
 )
-
-if TYPE_CHECKING:
-    import geopandas as gpd_t
-    import shapely.geometry as shg_t
 
 LOGGER = logging.getLogger(__name__)
 
@@ -248,12 +245,18 @@ class ClsTableSource(AltimetrySource[cls_t.TableMeasure]):
         start: np.datetime64,
         end: np.datetime64,
         variables: list[str] | None = None,
-        polygon: str | gpd_t.GeoDataFrame | shg_t.Polygon | None = None,
+        polygon: PolygonLike | None = None,
+        backend_kwargs: dict[str, Any] | None = None,
     ) -> xr.Dataset:
         variables = variables or list(self.variables())
 
+        if backend_kwargs is None:
+            backend_kwargs = {}
+
         with TableContext(name=self.name) as table:
-            data = table.read_values_as_dataset(variables, start, end, include_end=True)
+            data = table.read_values_as_dataset(
+                variables, start, end, include_end=True, **backend_kwargs
+            )
 
         return self.restrict_to_polygon(data=data, polygon=polygon)
 
@@ -261,7 +264,8 @@ class ClsTableSource(AltimetrySource[cls_t.TableMeasure]):
         self,
         cycles_nb: list[int],
         variables: list[str] | None = None,
-        polygon: str | gpd_t.GeoDataFrame | shg_t.Polygon | None = None,
+        polygon: PolygonLike | None = None,
+        backend_kwargs: dict[str, Any] | None = None,
     ) -> xr.Dataset:
         self._check_orf()
 
@@ -294,6 +298,7 @@ class ClsTableSource(AltimetrySource[cls_t.TableMeasure]):
                     end=pass_end_info[3],
                     variables=variables,
                     polygon=polygon,
+                    backend_kwargs=backend_kwargs,
                 )
             )
 
@@ -306,7 +311,8 @@ class ClsTableSource(AltimetrySource[cls_t.TableMeasure]):
         cycles_nb: int | list[int],
         passes_nb: int | list[int] | None = None,
         variables: list[str] | None = None,
-        polygon: str | gpd_t.GeoDataFrame | shg_t.Polygon | None = None,
+        polygon: PolygonLike | None = None,
+        backend_kwargs: dict[str, Any] | None = None,
     ) -> xr.Dataset:
         self._check_orf()
 
@@ -315,7 +321,10 @@ class ClsTableSource(AltimetrySource[cls_t.TableMeasure]):
 
         if passes_nb is None:
             return self._query_cycle(
-                cycles_nb=cycles_nb, variables=variables, polygon=polygon
+                cycles_nb=cycles_nb,
+                variables=variables,
+                polygon=polygon,
+                backend_kwargs=backend_kwargs,
             )
 
         if isinstance(passes_nb, int):
@@ -346,6 +355,7 @@ class ClsTableSource(AltimetrySource[cls_t.TableMeasure]):
                         end=pass_info[3],
                         variables=variables,
                         polygon=polygon,
+                        backend_kwargs=backend_kwargs,
                     )
                 )
 

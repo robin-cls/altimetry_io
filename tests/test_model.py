@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import dataclasses as dc
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 import pandas as pd
@@ -57,6 +57,7 @@ class FakeSource(AltimetrySource[int]):
         end: np.datetime64,
         variables: list[str] | None = None,
         polygon: str | gpd_t.GeoDataFrame | shg_t.Polygon | None = None,
+        backend_kwargs: dict[str, Any] | None = None,
     ) -> xr.Dataset:
         return xr.Dataset()
 
@@ -65,6 +66,7 @@ class FakeSource(AltimetrySource[int]):
         periods: list[tuple[np.datetime64, np.datetime64]],
         variables: list[str] | None = None,
         polygon: str | gpd_t.GeoDataFrame | shg_t.Polygon | None = None,
+        backend_kwargs: dict[str, Any] | None = None,
     ) -> xr.Dataset:
         return xr.Dataset()
 
@@ -74,6 +76,7 @@ class FakeSource(AltimetrySource[int]):
         passes_nb: int | list[int] | None = None,
         variables: list[str] | None = None,
         polygon: str | gpd_t.GeoDataFrame | shg_t.Polygon | None = None,
+        backend_kwargs: dict[str, Any] | None = None,
     ) -> xr.Dataset:
         return xr.Dataset()
 

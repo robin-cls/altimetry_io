@@ -10,9 +10,10 @@ import xarray as xr
 
 from altimetry.io.sources import AltimetrySource, AltimetryVariable
 
+from ..utilities import PolygonLike
+
 if TYPE_CHECKING:
-    import geopandas as gpd_t
-    import shapely.geometry as shg_t
+    pass
 
 
 LOGGER = logging.getLogger(__name__)
@@ -98,7 +99,8 @@ class AltimetryData:
         start: np.datetime64,
         end: np.datetime64,
         variables: list[str] | None = None,
-        polygon: str | gpd_t.GeoDataFrame | shg_t.Polygon | None = None,
+        polygon: PolygonLike | None = None,
+        backend_kwargs: dict[str, Any] | None = None,
     ) -> xr.Dataset:
         """Query data between two dates.
 
@@ -112,6 +114,13 @@ class AltimetryData:
             Set of variables to query.
         polygon
             Selection polygon on which to reduce the data.
+            Expected types are:
+                str
+                | geopandas.GeoDataFrame
+                | shapely.geometry.Polygon
+                | tuple[float, float, float, float]
+        backend_kwargs
+            Additional parameters to pass to the underlying data source.
 
         Returns
         -------
@@ -119,14 +128,19 @@ class AltimetryData:
             Dataset respecting the query constraints.
         """
         return self.source.query_date(
-            start=start, end=end, variables=variables, polygon=polygon
+            start=start,
+            end=end,
+            variables=variables,
+            polygon=polygon,
+            backend_kwargs=backend_kwargs,
         )
 
     def query_periods(
         self,
         periods: list[tuple[np.datetime64, np.datetime64]],
         variables: list[str] | None = None,
-        polygon: str | gpd_t.GeoDataFrame | shg_t.Polygon | None = None,
+        polygon: PolygonLike | None = None,
+        backend_kwargs: dict[str, Any] | None = None,
     ) -> xr.Dataset:
         """Query data contained in a set of periods.
 
@@ -138,6 +152,13 @@ class AltimetryData:
             Set of variables to query.
         polygon
             Selection polygon on which to reduce the data.
+            Expected types are:
+                str
+                | geopandas.GeoDataFrame
+                | shapely.geometry.Polygon
+                | tuple[float, float, float, float]
+        backend_kwargs
+            Additional parameters to pass to the underlying data source.
 
         Returns
         -------
@@ -145,7 +166,10 @@ class AltimetryData:
             Dataset respecting the query constraints.
         """
         return self.source.query_periods(
-            periods=periods, variables=variables, polygon=polygon
+            periods=periods,
+            variables=variables,
+            polygon=polygon,
+            backend_kwargs=backend_kwargs,
         )
 
     def query_orbit(
@@ -153,7 +177,8 @@ class AltimetryData:
         cycles_nb: int | list[int],
         passes_nb: int | list[int] | None = None,
         variables: list[str] | None = None,
-        polygon: str | gpd_t.GeoDataFrame | shg_t.Polygon | None = None,
+        polygon: PolygonLike | None = None,
+        backend_kwargs: dict[str, Any] | None = None,
     ) -> xr.Dataset:
         """Query data for a set of cycles and passes.
 
@@ -167,6 +192,13 @@ class AltimetryData:
             Set of variables to query.
         polygon
             Selection polygon on which to reduce the data.
+            Expected types are:
+                str
+                | geopandas.GeoDataFrame
+                | shapely.geometry.Polygon
+                | tuple[float, float, float, float]
+        backend_kwargs
+            Additional parameters to pass to the underlying data source.
 
         Returns
         -------
@@ -178,4 +210,5 @@ class AltimetryData:
             passes_nb=passes_nb,
             variables=variables,
             polygon=polygon,
+            backend_kwargs=backend_kwargs,
         )

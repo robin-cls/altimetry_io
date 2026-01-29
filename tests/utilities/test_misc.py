@@ -52,6 +52,11 @@ def test_normalize_polygon(tmp_path):
     assert isinstance(polygon_3, gpd.GeoDataFrame)
     assert polygon_3.geometry.equals(polygon_norm.geometry)
 
+    bbox = (0, 10, 15, 20)
+    polygon_4 = normalize_polygon(polygon=bbox)
+    assert isinstance(polygon_norm, gpd.GeoDataFrame)
+    assert polygon_4.geometry.iloc[0].bounds == bbox
+
 
 @pytest.mark.parametrize(
     ("geometry", "res"),

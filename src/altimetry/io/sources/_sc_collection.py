@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import dataclasses as dc
 import datetime
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import fsspec
 import numpy as np
@@ -18,12 +18,12 @@ from altimetry.io.utilities import (
     normalize_polygon,
 )
 
+from ..utilities import PolygonLike
 from ._model import DOC_PARAMETERS_ALTI_SOURCE, AltimetrySource, AltimetryVariable
 
 if TYPE_CHECKING:
     import geopandas as gpd_t
     import pyinterp.geodetic as pyi_geo_t
-    import shapely.geometry as shg_t
 
 
 @dc.dataclass(kw_only=True)
@@ -105,15 +105,20 @@ class ScCollectionSource(AltimetrySource[sc_io.Collection]):
         start: np.datetime64,
         end: np.datetime64,
         variables: list[str] | None = None,
-        polygon: str | gpd_t.GeoDataFrame | shg_t.Polygon | None = None,
+        polygon: PolygonLike | None = None,
+        backend_kwargs: dict[str, Any] | None = None,
     ) -> xr.Dataset:
         polygon_gpd, _ = self._polygons(polygon=polygon)
+
+        if backend_kwargs is None:
+            backend_kwargs = {}
 
         data = self._collection.query(
             first_day=start.astype("datetime64[D]").astype(datetime.date),
             last_day=end.astype("datetime64[D]").astype(datetime.date),
             selected_variables=variables,
             polygon=None,
+            **backend_kwargs,
         )
 
         if data is None:
@@ -132,15 +137,20 @@ class ScCollectionSource(AltimetrySource[sc_io.Collection]):
         cycles_nb: int | list[int],
         passes_nb: int | list[int] | None = None,
         variables: list[str] | None = None,
-        polygon: str | gpd_t.GeoDataFrame | shg_t.Polygon | None = None,
+        polygon: PolygonLike | None = None,
+        backend_kwargs: dict[str, Any] | None = None,
     ) -> xr.Dataset:
         polygon_gpd, _ = self._polygons(polygon=polygon)
+
+        if backend_kwargs is None:
+            backend_kwargs = {}
 
         data = self._collection.query(
             cycle_numbers=cycles_nb,
             pass_numbers=passes_nb,
             selected_variables=variables,
             polygon=None,
+            **backend_kwargs,
         )
 
         if data is None:
@@ -150,7 +160,7 @@ class ScCollectionSource(AltimetrySource[sc_io.Collection]):
 
     @staticmethod
     def _polygons(
-        polygon: str | gpd_t.GeoDataFrame | shg_t.Polygon | None,
+        polygon: PolygonLike | None,
     ) -> tuple[gpd_t.GeoDataFrame | None, pyi_geo_t.Polygon | None]:
         """Normalize provided polygon to a GeoDataFrame and, if possible, a
         pyinterp.geodetic.Polygon."""

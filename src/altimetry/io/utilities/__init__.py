@@ -1,4 +1,5 @@
 __all__ = [
+    "PolygonLike",
     "data_slice",
     "data_slice_include_end",
     "dataset_select_field_1d",
@@ -13,6 +14,7 @@ __all__ = [
 
 from ._data import data_slice, data_slice_include_end, dataset_select_field_1d
 from ._misc import (
+    PolygonLike,
     missing_dependency_class,
     normalize_enum,
     normalize_file_system,

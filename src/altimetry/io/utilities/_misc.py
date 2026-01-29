@@ -4,7 +4,7 @@ import enum
 import logging
 import pathlib as pl
 from collections import defaultdict
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Any, TypeAlias, TypeVar
 
 import fsspec
 import numpy as np
@@ -17,10 +17,12 @@ if TYPE_CHECKING:
 LOGGER = logging.getLogger(__name__)
 T = TypeVar("T", bound=enum.Enum)
 
+PolygonLike: TypeAlias = (
+    "str | gpd_t.GeoDataFrame | shg_t.Polygon | tuple[float, float, float, float]"
+)
 
-def normalize_polygon(
-    polygon: str | gpd_t.GeoDataFrame | shg_t.Polygon,
-) -> gpd_t.GeoDataFrame:
+
+def normalize_polygon(polygon: PolygonLike) -> gpd_t.GeoDataFrame:
     """Normalize provided polygon to a GeoDataFrame.
 
     Parameters
@@ -39,6 +41,10 @@ def normalize_polygon(
     import shapely.geometry as shg
 
     match polygon:
+        case tuple():
+            minx, miny, maxx, maxy = polygon
+            polygon = shg.box(minx, miny, maxx, maxy)
+            gdf = gpd.GeoDataFrame(index=[0], crs="epsg:4326", geometry=[polygon])
         case str() | pl.Path():
             gdf = gpd.read_file(polygon)
         case shg.Polygon():
@@ -142,7 +148,7 @@ def restrict_to_box(
 
 def restrict_to_polygon(
     data: xr.Dataset,
-    polygon: str | gpd_t.GeoDataFrame | shg_t.Polygon,
+    polygon: PolygonLike,
     index: str,
     longitude: str,
     latitude: str,
