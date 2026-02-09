@@ -6,14 +6,13 @@ from typing import TYPE_CHECKING, Any
 
 import numpy as np
 import pandas as pd
-import xarray as xr
 
 from altimetry.io.sources import AltimetrySource, AltimetryVariable
 
 from ..utilities import PolygonLike
 
 if TYPE_CHECKING:
-    pass
+    import xarray as xr
 
 
 LOGGER = logging.getLogger(__name__)

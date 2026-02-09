@@ -1,32 +1,41 @@
 [build-system]
-requires = ["setuptools"]
+requires = ["setuptools", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "altimetry-io"
+dynamic = ["version"]
 authors = [
-    {name = "CNES", email = "cnes@cnes.fr"},
+    {name = "Thomas Zilio", email = "tzilio@groupcls.com"},
+    {name = "Anne-Sophie Tonneau", email = "atonneau@groupcls.com"}
 ]
-description = ""
-readme = "README.rst"
-keywords = [""]
-license = "LicenseRef-Proprietary-License"
+maintainers = [
+    {name = "Thomas Zilio", email = "tzilio@groupcls.com"},
+    {name = "Anne-Sophie Tonneau", email = "atonneau@groupcls.com"}
+]
+description = "Provide a unified way to read a data collection, independent of the underlying data representation."
+readme = "README.md"
 classifiers = [
-    "Development Status :: 4 - Beta",
-    "Operating System :: POSIX :: Linux",
-    "Operating System :: Unix",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-]
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Oceanography",
+    "Development Status :: 4 - Beta"]
 
 requires-python = ">=3.11"
-version = "0.2"
 dependencies = [
     "fsspec",
     "numpy",
     "pandas",
-    "ruamel.yaml",
-    "s3fs",
     "xarray",
+    "files-collections",
 ]
 
 [project.optional-dependencies]
@@ -37,14 +46,11 @@ polygon = [
 ]
 sources = [
     "cls_tables",
-    "files-collections",
     "swot_calval",
 ]
 tests = [
     "pytest",
     "cls_tables",
-    "dask",
-    "distributed",
     "geopandas",
     "pyinterp",
     "shapely",
@@ -61,29 +67,16 @@ dev-tools = [
 "*" = ["*.yaml", "*.yml"]
 
 [project.urls]
-homepage = "https://cnes.cnes.fr"
-changelog = "https://cnes.cnes.fr"
-repository = "https://cnes.cnes.fr"
+repository = "https://github.com/robin-cls/altimetry_io"
 
 [tool.pytest.ini_options]
-addopts = [
-    "--import-mode=importlib",
-]
+addopts=["--import-mode=importlib"]
 filterwarnings = [
-]
-
-[tool.coverage.run]
-branch = true
-
-[tool.coverage.paths]
-source = [
-   "src",
-   "*/site-packages",
-    ]
-
-[tool.coverage.report]
-exclude_also = [
-    "if TYPE_CHECKING:",
+    # Turn all other warnings into errors
+    "error",
+    # Can be safely ignored according to
+    # https://github.com/Unidata/netcdf4-python/issues/1354
+    "ignore:numpy\\.ndarray size changed"
 ]
 
 [tool.ruff]
