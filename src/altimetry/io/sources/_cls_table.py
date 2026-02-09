@@ -26,7 +26,7 @@ LOGGER = logging.getLogger(__name__)
 
 @lru_cache(maxsize=10000)
 def _pass_from_indices(
-    orf: str, cycle_nb: int, pass_nb: int, method: str
+    orf: str, cycle_number: int, pass_number: int, method: str
 ) -> tuple[
     tuple[np.datetime64, float, float],
     tuple[np.datetime64, float, float],
@@ -60,14 +60,14 @@ def _pass_from_indices(
         * Pass number
     """
     with OrfContext(name=orf) as orf_h:
-        if pass_nb > orf_h.passes_per_cycle and method in [
+        if pass_number > orf_h.passes_per_cycle and method in [
             "before",
             "before_or_equal",
         ]:
-            pass_nb = orf_h.passes_per_cycle
+            pass_number = orf_h.passes_per_cycle
 
         return orf_h.find_track_info_from_indices(
-            cycle_nb, pass_nb, extrapolate=False, method=method
+            cycle_number, pass_number, extrapolate=False, method=method
         )
 
 
@@ -220,8 +220,8 @@ class ClsTableSource(AltimetrySource[cls_t.TableMeasure]):
 
         cycles_list = []
         pass_info = self.pass_from_indices(
-            cycle_nb=half_orbit_min_t[0],
-            pass_nb=half_orbit_min_t[1],
+            cycle_number=half_orbit_min_t[0],
+            pass_number=half_orbit_min_t[1],
             method="after_or_equal",
         )
 
@@ -234,8 +234,8 @@ class ClsTableSource(AltimetrySource[cls_t.TableMeasure]):
         ):
             cycles_list.append((pass_info[0], pass_info[1], pass_info[2], pass_info[3]))
             pass_info = self.pass_from_indices(
-                cycle_nb=pass_info[0],
-                pass_nb=pass_info[1],
+                cycle_number=pass_info[0],
+                pass_number=pass_info[1],
                 method="after",
             )
         return pd.DataFrame(np.array(cycles_list, dtype=HALF_ORBIT_DTYPE))
@@ -262,7 +262,7 @@ class ClsTableSource(AltimetrySource[cls_t.TableMeasure]):
 
     def _query_cycle(
         self,
-        cycles_nb: list[int],
+        cycle_number: list[int],
         variables: list[str] | None = None,
         polygon: PolygonLike | None = None,
         backend_kwargs: dict[str, Any] | None = None,
@@ -270,15 +270,15 @@ class ClsTableSource(AltimetrySource[cls_t.TableMeasure]):
         self._check_orf()
 
         data = []
-        for cycle_nb in cycles_nb:
+        for cycle_nb in cycle_number:
             pass_start_info = self.pass_from_indices(
-                cycle_nb=cycle_nb,
-                pass_nb=1,
+                cycle_number=cycle_nb,
+                pass_number=1,
                 method="after_or_equal",
             )
             pass_end_info = self.pass_from_indices(
-                cycle_nb=cycle_nb + 1,
-                pass_nb=1,
+                cycle_number=cycle_nb + 1,
+                pass_number=1,
                 method="before",
             )
 
@@ -308,34 +308,34 @@ class ClsTableSource(AltimetrySource[cls_t.TableMeasure]):
 
     def query_orbit(
         self,
-        cycles_nb: int | list[int],
-        passes_nb: int | list[int] | None = None,
+        cycle_number: int | list[int],
+        pass_number: int | list[int] | None = None,
         variables: list[str] | None = None,
         polygon: PolygonLike | None = None,
         backend_kwargs: dict[str, Any] | None = None,
     ) -> xr.Dataset:
         self._check_orf()
 
-        if isinstance(cycles_nb, int):
-            cycles_nb = [cycles_nb]
+        if isinstance(cycle_number, int):
+            cycle_number = [cycle_number]
 
-        if passes_nb is None:
+        if pass_number is None:
             return self._query_cycle(
-                cycles_nb=cycles_nb,
+                cycle_number=cycle_number,
                 variables=variables,
                 polygon=polygon,
                 backend_kwargs=backend_kwargs,
             )
 
-        if isinstance(passes_nb, int):
-            passes_nb = [passes_nb]
+        if isinstance(pass_number, int):
+            pass_number = [pass_number]
 
         data = []
-        for cycle_nb in cycles_nb:
-            for pass_nb in passes_nb:
+        for cycle_nb in cycle_number:
+            for pass_nb in pass_number:
                 pass_info = self.pass_from_indices(
-                    cycle_nb=cycle_nb,
-                    pass_nb=pass_nb,
+                    cycle_number=cycle_nb,
+                    pass_number=pass_nb,
                     method="equal",
                 )
 
@@ -375,14 +375,14 @@ class ClsTableSource(AltimetrySource[cls_t.TableMeasure]):
             self._orf_passes_per_cycle = orf.passes_per_cycle
 
     def pass_from_indices(
-        self, cycle_nb: int, pass_nb: int, method: str
+        self, cycle_number: int, pass_number: int, method: str
     ) -> tuple[int, int, np.datetime64, np.datetime64] | None:
         self._check_orf()
 
         pass_info = _pass_from_indices(
             orf=self.orf,
-            cycle_nb=cycle_nb,
-            pass_nb=pass_nb,
+            cycle_number=cycle_number,
+            pass_number=pass_number,
             method=method,
         )
 

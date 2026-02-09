@@ -176,8 +176,8 @@ class AltimetrySource(Generic[T], abc.ABC):
     @abc.abstractmethod
     def query_orbit(
         self,
-        cycles_nb: int | list[int],
-        passes_nb: int | list[int] | None = None,
+        cycle_number: int | list[int],
+        pass_number: int | list[int] | None = None,
         variables: list[str] | None = None,
         polygon: PolygonLike | None = None,
         backend_kwargs: dict[str, Any] | None = None,
@@ -186,10 +186,10 @@ class AltimetrySource(Generic[T], abc.ABC):
 
         Parameters
         ----------
-        cycles_nb
+        cycle_number
             Cycle number or list of cycle numbers.
-        passes_nb
-            Passes number or list of passes numbers.
+        pass_number
+            Pass number or list of passes numbers.
         variables
             Set of variables to query.
         polygon

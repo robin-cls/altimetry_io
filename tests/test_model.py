@@ -72,8 +72,8 @@ class FakeSource(AltimetrySource[int]):
 
     def query_orbit(
         self,
-        cycles_nb: int | list[int],
-        passes_nb: int | list[int] | None = None,
+        cycle_number: int | list[int],
+        pass_number: int | list[int] | None = None,
         variables: list[str] | None = None,
         polygon: str | gpd_t.GeoDataFrame | shg_t.Polygon | None = None,
         backend_kwargs: dict[str, Any] | None = None,
@@ -140,11 +140,11 @@ def test_query_periods():
 
 def test_query_orbit():
     data = AltimetryData(source=SOURCE)
-    assert data.query_orbit(cycles_nb=3).equals(SOURCE.query_orbit(cycles_nb=3))
+    assert data.query_orbit(cycle_number=3).equals(SOURCE.query_orbit(cycle_number=3))
 
     data = AltimetryData(source=SOURCE)
-    assert data.query_orbit(cycles_nb=3, passes_nb=1).equals(
-        SOURCE.query_orbit(cycles_nb=3, passes_nb=1)
+    assert data.query_orbit(cycle_number=3, pass_number=1).equals(
+        SOURCE.query_orbit(cycle_number=3, pass_number=1)
     )
 
 

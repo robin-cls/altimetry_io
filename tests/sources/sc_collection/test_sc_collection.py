@@ -122,7 +122,7 @@ def test_query_cycle(swot_collection, cycles):
     fields = [source.time, source.longitude, source.latitude]
 
     data_ref = collection.query(cycle_numbers=cycles, selected_variables=fields)
-    data = source.query_orbit(cycles_nb=cycles, variables=fields)
+    data = source.query_orbit(cycle_number=cycles, variables=fields)
 
     if data_ref is None:
         assert data.sizes[source.index] == 0
@@ -143,7 +143,7 @@ def test_query_cycle_pass(swot_collection, cycles, passes):
     data_ref = collection.query(
         cycle_numbers=cycles, pass_numbers=passes, selected_variables=fields
     )
-    data = source.query_orbit(cycles_nb=cycles, passes_nb=passes, variables=fields)
+    data = source.query_orbit(cycle_number=cycles, pass_number=passes, variables=fields)
 
     if data_ref is None:
         assert data.sizes[source.index] == 0
@@ -166,12 +166,12 @@ def test_query_polygon(swot_collection):
     )
 
     data_restricted = restrict_to_polygon(
-        data=source.query_orbit(cycles_nb=1, variables=fields),
+        data=source.query_orbit(cycle_number=1, variables=fields),
         polygon=polygon,
         index=source.index,
         longitude=source.longitude,
         latitude=source.latitude,
     )
-    data = source.query_orbit(cycles_nb=1, variables=fields, polygon=polygon)
+    data = source.query_orbit(cycle_number=1, variables=fields, polygon=polygon)
 
     assert data.equals(data_restricted)

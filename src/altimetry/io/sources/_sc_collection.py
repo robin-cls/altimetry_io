@@ -134,8 +134,8 @@ class ScCollectionSource(AltimetrySource[sc_io.Collection]):
 
     def query_orbit(
         self,
-        cycles_nb: int | list[int],
-        passes_nb: int | list[int] | None = None,
+        cycle_number: int | list[int],
+        pass_number: int | list[int] | None = None,
         variables: list[str] | None = None,
         polygon: PolygonLike | None = None,
         backend_kwargs: dict[str, Any] | None = None,
@@ -146,8 +146,8 @@ class ScCollectionSource(AltimetrySource[sc_io.Collection]):
             backend_kwargs = {}
 
         data = self._collection.query(
-            cycle_numbers=cycles_nb,
-            pass_numbers=passes_nb,
+            cycle_numbers=cycle_number,
+            pass_numbers=pass_number,
             selected_variables=variables,
             polygon=None,
             **backend_kwargs,

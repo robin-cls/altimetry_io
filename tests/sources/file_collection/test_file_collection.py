@@ -179,7 +179,7 @@ def test_query_date_bbox(fc_source, data_ref):
 
 
 def test_query_orbit(fc_source, l3_lr_ssh_basic):
-    data = fc_source.query_orbit(cycles_nb=NUM_CYCLE, passes_nb=NUM_PASS)
+    data = fc_source.query_orbit(cycle_number=NUM_CYCLE, pass_number=NUM_PASS)
 
     assert data[PASS_NUMBER].values[0] == NUM_PASS
     assert data[CYCLE_NUMBER].values[-1] <= NUM_CYCLE
@@ -191,7 +191,7 @@ def test_query_orbit(fc_source, l3_lr_ssh_basic):
 
     fields = {TIME, LONGITUDE, LATITUDE, VAR1, VAR2}
     data = fc_source.query_orbit(
-        cycles_nb=NUM_CYCLE, passes_nb=NUM_PASS, variables=fields
+        cycle_number=NUM_CYCLE, pass_number=NUM_PASS, variables=fields
     )
     assert not (set(fields) - set(data.variables))
 
@@ -204,7 +204,7 @@ def test_query_orbit_nadir_swath(fc_source, caplog):
     caplog.set_level(logging.WARNING)
 
     fc_source.query_orbit(
-        cycles_nb=NUM_CYCLE, passes_nb=NUM_PASS, backend_kwargs=backend_kwargs
+        cycle_number=NUM_CYCLE, pass_number=NUM_PASS, backend_kwargs=backend_kwargs
     )
 
     assert any(
@@ -229,7 +229,7 @@ def test_query_orbit_polygon(fc_source, data_ref):
         ]
     )
     data = fc_source.query_orbit(
-        cycles_nb=NUM_CYCLE, passes_nb=NUM_PASS, polygon=polygon
+        cycle_number=NUM_CYCLE, pass_number=NUM_PASS, polygon=polygon
     )
     data_ref_restricted = restrict_to_polygon(
         data=data_ref,
@@ -251,7 +251,7 @@ def test_query_orbit_polygon(fc_source, data_ref):
         ]
     )
     data = fc_source.query_orbit(
-        cycles_nb=NUM_CYCLE, passes_nb=NUM_PASS, polygon=polygon
+        cycle_number=NUM_CYCLE, pass_number=NUM_PASS, polygon=polygon
     )
     data_ref_restricted = restrict_to_polygon(
         data=data_ref,
@@ -266,7 +266,9 @@ def test_query_orbit_polygon(fc_source, data_ref):
 def test_query_orbit_bbox(fc_source, data_ref):
     # Box not matching data
     bbox = (10, 10, 50, 50)
-    data = fc_source.query_orbit(cycles_nb=NUM_CYCLE, passes_nb=NUM_PASS, polygon=bbox)
+    data = fc_source.query_orbit(
+        cycle_number=NUM_CYCLE, pass_number=NUM_PASS, polygon=bbox
+    )
     # If the bbox doesn't match the data, FCollections returns
     # a dataset with coords and data_vars but empty data
     assert data[LONGITUDE].size == 0
@@ -274,12 +276,16 @@ def test_query_orbit_bbox(fc_source, data_ref):
 
     # Very large box
     bbox = (0, 0, 100, 100)
-    data = fc_source.query_orbit(cycles_nb=NUM_CYCLE, passes_nb=NUM_PASS, polygon=bbox)
+    data = fc_source.query_orbit(
+        cycle_number=NUM_CYCLE, pass_number=NUM_PASS, polygon=bbox
+    )
     assert data.equals(data_ref)
 
     # Box selecting 2 lines (6 points)
     bbox = (0, 0, 6, 6)
-    data = fc_source.query_orbit(cycles_nb=NUM_CYCLE, passes_nb=NUM_PASS, polygon=bbox)
+    data = fc_source.query_orbit(
+        cycle_number=NUM_CYCLE, pass_number=NUM_PASS, polygon=bbox
+    )
     assert data[LONGITUDE].size == 6
     assert data[LATITUDE].size == 6
 
@@ -292,7 +298,7 @@ def test_query_date_gdf(fc_source, polygon_gdf):
 
 def test_query_orbit_gdf(fc_source, polygon_gdf):
     data = fc_source.query_orbit(
-        cycles_nb=NUM_CYCLE, passes_nb=NUM_PASS, polygon=polygon_gdf
+        cycle_number=NUM_CYCLE, pass_number=NUM_PASS, polygon=polygon_gdf
     )
     assert data[LONGITUDE].size == 6
     assert data[LATITUDE].size == 6
@@ -311,12 +317,12 @@ def test_query_date_shapefile(fc_source, polygon_shp):
 
 def test_query_orbit_shapefile(fc_source, polygon_shp):
     data = fc_source.query_orbit(
-        cycles_nb=NUM_CYCLE, passes_nb=NUM_PASS, polygon=polygon_shp
+        cycle_number=NUM_CYCLE, pass_number=NUM_PASS, polygon=polygon_shp
     )
     assert data[LONGITUDE].size == 6
     assert data[LATITUDE].size == 6
     data = fc_source.query_orbit(
-        cycles_nb=NUM_CYCLE, passes_nb=NUM_PASS, polygon=str(polygon_shp)
+        cycle_number=NUM_CYCLE, pass_number=NUM_PASS, polygon=str(polygon_shp)
     )
     assert data[LONGITUDE].size == 6
     assert data[LATITUDE].size == 6

@@ -238,8 +238,8 @@ class FileCollectionSource(AltimetrySource[fc_core.FilesDatabase]):
 
     def query_orbit(
         self,
-        cycles_nb: int | list[int],
-        passes_nb: int | list[int] | None = None,
+        cycle_number: int | list[int],
+        pass_number: int | list[int] | None = None,
         variables: list[str] | None = None,
         polygon: PolygonLike | None = None,
         backend_kwargs: dict[str, Any] | None = None,
@@ -269,8 +269,8 @@ class FileCollectionSource(AltimetrySource[fc_core.FilesDatabase]):
             request_kwargs["bbox"] = polygon
 
         data = self._database.query(
-            cycle_number=cycles_nb,
-            pass_number=passes_nb,
+            cycle_number=cycle_number,
+            pass_number=pass_number,
             selected_variables=variables,
             **request_kwargs,
         )
