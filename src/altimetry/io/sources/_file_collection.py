@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import dataclasses as dc
 import enum
+import logging
 from typing import Any
 
 import fcollections.core as fc_core
@@ -30,9 +31,11 @@ from ._model import (
     AltimetryVariable,
 )
 
-OT_CONST_TIME = "time"
-OT_CONST_CYCLE_NUMBER = "cycle_number"
-OT_CONST_PASS_NUMBER = "pass_number"
+FC_CONST_TIME = "time"
+FC_CONST_CYCLE_NUMBER = "cycle_number"
+FC_CONST_PASS_NUMBER = "pass_number"
+
+LOGGER = logging.getLogger(__name__)
 
 
 class FCollectionType(enum.Enum):
@@ -120,12 +123,12 @@ class FileCollectionSource(AltimetrySource[fc_core.FilesDatabase]):
             sort=True, **self._request_kwargs()
         )
 
-        periods = np.array([[p.start, p.stop] for p in pd_files[OT_CONST_TIME].values])
+        periods = np.array([[p.start, p.stop] for p in pd_files[FC_CONST_TIME].values])
 
-        if OT_CONST_CYCLE_NUMBER in pd_files.columns:
+        if FC_CONST_CYCLE_NUMBER in pd_files.columns:
             self._with_ho = True
 
-            ho_data = pd_files[[OT_CONST_PASS_NUMBER, OT_CONST_PASS_NUMBER]].values
+            ho_data = pd_files[[FC_CONST_CYCLE_NUMBER, FC_CONST_PASS_NUMBER]].values
 
             data = np.empty(ho_data.shape[0], dtype=HALF_ORBIT_DTYPE)
             data[CONST_CYCLE_NUMBER] = ho_data[:, 0]
@@ -196,24 +199,42 @@ class FileCollectionSource(AltimetrySource[fc_core.FilesDatabase]):
         polygon: PolygonLike | None = None,
         backend_kwargs: dict[str, Any] | None = None,
     ) -> xr.Dataset:
-        if backend_kwargs is None:
-            backend_kwargs = {}
-        request_kwargs = {**self._request_kwargs(), **backend_kwargs}
+        backend_kwargs = backend_kwargs or {}
 
-        bbox = polygon
-        if not isinstance(polygon, tuple):
-            bbox = polygon_bounding_box(polygon=polygon)
+        if "nadir" in backend_kwargs or "swath" in backend_kwargs:
+            LOGGER.warning(
+                "The nadir/swath parameters cannot be applied to this collection."
+                " Please open a NADIR_L2/NADIR_L3 collection to query nadir data."
+            )
+            backend_kwargs.pop("nadir", None)
+            backend_kwargs.pop("swath", None)
 
-        if bbox is not None:
-            request_kwargs["bbox"] = bbox
+        request_kwargs = {
+            **self._request_kwargs(),
+            **backend_kwargs,
+        }
+        is_bbox = isinstance(polygon, tuple)
+
+        polygon = polygon_bounding_box(polygon=polygon)
+
+        # FCollections doesn't allow bbox=None as kwarg
+        if polygon is not None:
+            request_kwargs["bbox"] = polygon
 
         data = self._database.query(
             time=fc_time.Period(start=start, stop=end),
             selected_variables=variables,
             **request_kwargs,
         )
+        if data is None:
+            return self._empty_dataset()
 
-        return data or self._empty_dataset()
+        # Deactivate polygon restriction if the polygon was a bbox
+        # -> the selection was done by fcollections
+        if is_bbox:
+            polygon = None
+
+        return self.restrict_to_polygon(data=data, polygon=polygon)
 
     def query_orbit(
         self,
@@ -223,18 +244,29 @@ class FileCollectionSource(AltimetrySource[fc_core.FilesDatabase]):
         polygon: PolygonLike | None = None,
         backend_kwargs: dict[str, Any] | None = None,
     ) -> xr.Dataset:
+        backend_kwargs = backend_kwargs or {}
+
+        if "nadir" in backend_kwargs or "swath" in backend_kwargs:
+            LOGGER.warning(
+                "The nadir/swath parameters cannot be applied to this collection."
+                " Please open a NADIR_L2/NADIR_L3 collection to query nadir data."
+            )
+            backend_kwargs.pop("nadir", None)
+            backend_kwargs.pop("swath", None)
+
         self._check_orf()
 
-        if backend_kwargs is None:
-            backend_kwargs = {}
-        request_kwargs = {**self._request_kwargs(), **backend_kwargs}
+        request_kwargs = {
+            **self._request_kwargs(),
+            **backend_kwargs,
+        }
+        is_bbox = isinstance(polygon, tuple)
 
-        bbox = polygon
-        if not isinstance(polygon, tuple):
-            bbox = polygon_bounding_box(polygon=polygon)
+        polygon = polygon_bounding_box(polygon=polygon)
 
-        if bbox is not None:
-            request_kwargs["bbox"] = bbox
+        # FCollections doesn't allow bbox=None as kwarg
+        if polygon is not None:
+            request_kwargs["bbox"] = polygon
 
         data = self._database.query(
             cycle_number=cycles_nb,
@@ -242,8 +274,15 @@ class FileCollectionSource(AltimetrySource[fc_core.FilesDatabase]):
             selected_variables=variables,
             **request_kwargs,
         )
+        if data is None:
+            return self._empty_dataset()
 
-        return data or self._empty_dataset()
+        # Deactivate polygon restriction if the polygon was a bbox
+        # -> the selection was done by fcollections
+        if is_bbox:
+            polygon = None
+
+        return self.restrict_to_polygon(data=data, polygon=polygon)
 
     def _check_orf(self):
         self._initialize()

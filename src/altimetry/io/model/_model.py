@@ -114,7 +114,7 @@ class AltimetryData:
             Set of variables to query.
         polygon
             Selection polygon on which to reduce the data.
-            Can be represented as a string or a path to a shapefile, a geopandas 
+            Can be represented as a string or a path to a shapefile, a geopandas
             GeoDataFrame, a shapely Polygon, or a bounding box representing by a
             tuple of floats as (lon_min, lat_min, lon_max, lat_max).
         backend_kwargs
@@ -150,7 +150,7 @@ class AltimetryData:
             Set of variables to query.
         polygon
             Selection polygon on which to reduce the data.
-            Can be represented as a string or a path to a shapefile, a geopandas 
+            Can be represented as a string or a path to a shapefile, a geopandas
             GeoDataFrame, a shapely Polygon, or a bounding box representing by a
             tuple of floats as (lon_min, lat_min, lon_max, lat_max).
         backend_kwargs
@@ -188,7 +188,7 @@ class AltimetryData:
             Set of variables to query.
         polygon
             Selection polygon on which to reduce the data.
-            Can be represented as a string or a path to a shapefile, a geopandas 
+            Can be represented as a string or a path to a shapefile, a geopandas
             GeoDataFrame, a shapely Polygon, or a bounding box representing by a
             tuple of floats as (lon_min, lat_min, lon_max, lat_max).
         backend_kwargs

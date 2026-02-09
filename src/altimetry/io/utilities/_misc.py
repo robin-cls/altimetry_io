@@ -54,14 +54,14 @@ def normalize_polygon(polygon: PolygonLike) -> gpd_t.GeoDataFrame:
         case gpd.GeoDataFrame() | gpd.GeoSeries():
             gdf = gpd.GeoDataFrame(polygon)
         case _:
-            msg = f"Provide polygon type is invalid: {type(polygon)}"
+            msg = f"Provided polygon type is invalid: {type(polygon)}"
             raise TypeError(msg)
 
     return gdf
 
 
 def polygon_bounding_box(
-    polygon: gpd_t.GeoDataFrame | None,
+    polygon: PolygonLike | None,
 ) -> tuple[float, float, float, float] | None:
     """Extract the bounding box from provided polygon.
 
@@ -77,6 +77,9 @@ def polygon_bounding_box(
     """
     if polygon is None:
         return None
+
+    if isinstance(polygon, tuple):
+        return polygon
 
     polygon_norm = normalize_polygon(polygon=polygon)
 

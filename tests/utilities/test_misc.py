@@ -30,7 +30,7 @@ DATASET_2D = xr.Dataset(
 
 
 def test_normalize_polygon(tmp_path):
-    with pytest.raises(TypeError, match="Provide polygon type is invalid"):
+    with pytest.raises(TypeError, match="Provided polygon type is invalid"):
         normalize_polygon(polygon=1)
 
     polygon = shp.Polygon([(0, 0), (0, 10), (10, 10), (10, 0), (0, 0)])
@@ -62,45 +62,51 @@ def test_normalize_polygon(tmp_path):
     ("geometry", "res"),
     [
         (None, None),
+        ((-180, -90, 10, 10), (-180, -90, 10, 10)),
         (
             [
-                shp.Point(0, 0),
-                shp.Point(0, 10),
-                shp.Point(10, 10),
-                shp.Point(10, 0),
-                shp.Point(0, 0),
+                (0, 0),
+                (0, 10),
+                (10, 10),
+                (10, 0),
+                (0, 0),
             ],
             (0, 0, 10, 10),
         ),
         (
             [
-                shp.Point(-50, 0),
-                shp.Point(0, 10),
-                shp.Point(100, 10),
-                shp.Point(10, 0),
-                shp.Point(-50, 0),
+                (-50, 0),
+                (0, 10),
+                (100, 10),
+                (10, 0),
+                (-50, 0),
             ],
             (-50, 0, 100, 10),
         ),
         (
             [
-                shp.Point(-180, -90),
-                shp.Point(0, 10),
-                shp.Point(10, 10),
-                shp.Point(10, 0),
-                shp.Point(0, 0),
+                (-180, -90),
+                (0, 10),
+                (10, 10),
+                (10, 0),
+                (0, 0),
             ],
             (-180, -90, 10, 10),
         ),
     ],
 )
 def test_polygon_bounding_box(geometry, res):
-    if geometry is None:
-        polygon = None
-    else:
-        polygon = gpd.GeoDataFrame(data={"geometry": geometry}, geometry="geometry")
+    if isinstance(geometry, list):
+        polygon = shp.Polygon(geometry)
+        assert polygon_bounding_box(polygon=polygon) == res
 
-    assert polygon_bounding_box(polygon=polygon) == res
+        polygon = gpd.GeoDataFrame(
+            data={"geometry": [shp.Point(x, y) for x, y in geometry]},
+            geometry="geometry",
+        )
+        assert polygon_bounding_box(polygon=polygon) == res
+    else:
+        assert polygon_bounding_box(polygon=geometry) == res
 
 
 @pytest.mark.parametrize(
