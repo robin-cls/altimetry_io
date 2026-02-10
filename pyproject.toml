@@ -35,6 +35,7 @@ dependencies = [
     "numpy",
     "pandas",
     "xarray",
+    "files-collections",
 ]
 
 [project.optional-dependencies]
@@ -44,7 +45,6 @@ polygon = [
     "shapely",
 ]
 sources = [
-    "files-collections",
     "cls_tables",
     "swot_calval",
 ]
