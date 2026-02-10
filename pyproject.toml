@@ -15,11 +15,6 @@ maintainers = [
     {name = "Thomas Zilio", email = "tzilio@groupcls.com"},
     {name = "Robin Chevrier", email = "rchevrier@groupcls.com"}
 ]
-urls = {
-  Homepage = "https://github.com/robin-cls/altimetry_io",
-  Repository = "https://github.com/robin-cls/altimetry_io",
-  Changelog = "https://github.com/robin-cls/altimetry_io/blob/main/CHANGELOG.md"
-}
 description = "Provide a unified way to read a data collection, independent of the underlying data representation."
 readme = "README.md"
 classifiers = [
@@ -44,6 +39,11 @@ dependencies = [
     "xarray",
     "files-collections",
 ]
+
+[project.urls]
+Homepage = "https://github.com/robin-cls/altimetry_io"
+Repository = "https://github.com/robin-cls/altimetry_io"
+Changelog = "https://github.com/robin-cls/altimetry_io/blob/main/CHANGELOG.md"
 
 [tool.setuptools.packages.find]
 exclude = ["**/__pycache__", "**/.ipynb_checkpoints"]
