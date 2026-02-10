@@ -15,6 +15,11 @@ maintainers = [
     {name = "Thomas Zilio", email = "tzilio@groupcls.com"},
     {name = "Robin Chevrier", email = "rchevrier@groupcls.com"}
 ]
+urls = {
+  Homepage = "https://github.com/robin-cls/altimetry_io",
+  Repository = "https://github.com/robin-cls/altimetry_io",
+  Changelog = "https://github.com/robin-cls/altimetry_io/blob/main/CHANGELOG.md"
+}
 description = "Provide a unified way to read a data collection, independent of the underlying data representation."
 readme = "README.md"
 classifiers = [
@@ -77,9 +82,6 @@ dev-tools = [
 
 [tool.setuptools.package-data]
 "*" = ["*.yaml", "*.yml"]
-
-[project.urls]
-repository = "https://github.com/robin-cls/altimetry_io"
 
 [tool.pytest.ini_options]
 addopts=["--import-mode=importlib"]

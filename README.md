@@ -1,9 +1,9 @@
 # Altimetry-io
 
-Provide a unified way to read a data collection, independent of the underlying data representation.
+A library providing a unified way to read an altimetry data collection, independent of the underlying data representation.
 
-- Relies on [FCollections](https://robin-cls.github.io/fcollections/index.html#) for netcdf files collections reading
-- Can also read Zcollections or CLS tables
+- Relies on [Files Collections](https://pypi.org/project/files-collections/) for NetCDF files collections reading
+- Can also read ZCollections format
 
 
 ## Quick start
@@ -30,11 +30,6 @@ ds = alti_data.query_orbit(
     polygon=(-151, -109, 71, 78)
 )
 ```
-
-## Documentation
-
-📘 **Full documentation:**
-https://robin-cls.github.io/altimetry_io/index.html#
 
 ## Project status
 
