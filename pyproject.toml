@@ -48,12 +48,14 @@ sources = [
     "cls_tables",
     "swot_calval",
 ]
-tests = [
+testing = [
     "pytest",
     "geopandas",
     "pyinterp",
     "shapely",
-    "h5py"
+    "h5py",
+    "dask",
+    "numba"
 ]
 coverage = ["pytest-cov"]
 documentation = [
